@@ -13,7 +13,6 @@ const (
 	screenWidth  = 320
 	screenHeight = 240
 	tilesPerRow  = screenWidth / tileSize
-	xTilesImg    = 2
 )
 
 var (
@@ -112,10 +111,7 @@ func drawTiles(screen *ebiten.Image) error {
 		y := float64(i/tilesPerRow) * tileSize
 		op.GeoM.Translate(x, y)
 
-		width, _ := tilesImage.Size()
-		// sprite image rectangle top-left coordinates
-		sx := t % (width / tileSize) * tileSize
-		sy := t / (width / tileSize) * tileSize
+		sx, sy := getTileCoordinates(t, tilesImage, tileSize)
 		sprite := tilesImage.SubImage(image.Rect(sx, sy, sx+tileSize, sy+tileSize))
 		err := screen.DrawImage(sprite.(*ebiten.Image), op)
 		if err != nil {
@@ -123,6 +119,13 @@ func drawTiles(screen *ebiten.Image) error {
 		}
 	}
 	return nil
+}
+
+// getTileCoordinates returns tile top-left coordinates in the image with a given
+// square tile size and the ordinal number of a tile.
+func getTileCoordinates(t int, img *ebiten.Image, tileSize int) (x int, y int) {
+	width, _ := img.Size()
+	return t % (width / tileSize) * tileSize, t / (width / tileSize) * tileSize
 }
 
 func main() {
