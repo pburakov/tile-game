@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"image"
 	_ "image/png"
 	"log"
@@ -83,6 +85,13 @@ func update(screen *ebiten.Image) error {
 	if err != nil {
 		return err
 	}
+
+	x, y := ebiten.CursorPosition()
+	lftDown := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
+	rgtDown := ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight)
+	ebitenutil.DebugPrint(screen, fmt.Sprintf(
+		"left mouse down: %t\nrght mouse down: %t\ncoordinates (%d, %d)",
+		lftDown, rgtDown, x, y))
 
 	return nil
 }
