@@ -1,13 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"image"
 	_ "image/png"
 	"log"
 	"os"
+	"time"
 )
 
 const (
@@ -18,26 +17,28 @@ const (
 )
 
 const (
-	none  = 0x00
-	grass = 0x19
+	none        = byte(0x00)
+	grass       = byte(0x19)
+	trainSprite = byte(0x0f)
+	cursor      = byte(0x14)
 
 	// To construct a tile, combine the starting tile with an offset number
 	// e.g. for crossing: `road + Cr` `rail + VL`
-	road = 0x00
-	rail = 0x0f
+	road = byte(0x00)
+	rail = byte(0x0f)
 
 	// Tile offsets
-	Ver = 0x01 // Vertical
-	Hor = 0x02 // Horizontal
-	DL  = 0x03 // Down-Left curve
-	DR  = 0x06 // Down-Right curve
-	UL  = 0x0d // Up-Left curve
-	UR  = 0x0b // Up-Right curve
-	Cro = 0x07 // Crossing
-	VL  = 0x08 // Vertical-Left T-section
-	VR  = 0x09 // Vertical-Right T-section
-	HU  = 0x0c // Horizontal-Up T-section
-	HD  = 0x0e // Horizontal-Down T-section
+	Ver = byte(0x01) // Vertical
+	Hor = byte(0x02) // Horizontal
+	DL  = byte(0x03) // Down-Left curve
+	DR  = byte(0x06) // Down-Right curve
+	UL  = byte(0x0d) // Up-Left curve
+	UR  = byte(0x0b) // Up-Right curve
+	Cro = byte(0x07) // Crossing
+	VL  = byte(0x08) // Vertical-Left T-section
+	VR  = byte(0x09) // Vertical-Right T-section
+	HU  = byte(0x0c) // Horizontal-Up T-section
+	HD  = byte(0x0e) // Horizontal-Down T-section
 )
 
 var (
@@ -59,7 +60,17 @@ var (
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	}
+	clock = 0
+	done  = make(chan bool) // exit signal
+	train Train
 )
+
+type Train struct {
+	x, y       float64
+	xVelocity  float64
+	yVelocity  float64
+	nextUpdate int // denotes clock tick at which to move to the next pixel
+}
 
 func init() {
 	log.SetFlags(0)
@@ -70,6 +81,32 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	trainX, trainY := tileToPosition(0, 12)
+	train = Train{float64(trainX), float64(trainY), 1.0, 0.0, 0}
+	launchClock()
+}
+
+func launchClock() {
+	ticker := time.NewTicker(100 * time.Millisecond)
+	go func() {
+		for {
+			select {
+			case <-done:
+				log.Print("clock stopped")
+				return
+			case <-ticker.C:
+				cycle()
+				clock++
+			}
+		}
+	}()
+	log.Print("launched clock")
+}
+
+// cycle updates inner state
+func cycle() {
+	train.x += train.xVelocity
+	train.y += train.yVelocity
 }
 
 func loadImage(path string) (*ebiten.Image, error) {
@@ -94,18 +131,6 @@ func update(screen *ebiten.Image) error {
 		return nil
 	}
 
-	x, y := ebiten.CursorPosition()
-	lftDown := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
-	rgtDown := ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight)
-	tx, ty := positionToTile(x, y)
-
-	if lftDown {
-		placeTile(tx, ty)
-	}
-	if rgtDown {
-		deleteTile(tx, ty)
-	}
-
 	err := drawBackground(screen)
 	if err != nil {
 		return err
@@ -116,10 +141,32 @@ func update(screen *ebiten.Image) error {
 		return err
 	}
 
-	ebitenutil.DebugPrint(screen, fmt.Sprintf(
-		"left mouse down: %t\nrght mouse down: %t\npos: (%d, %d)\ntile: (%d, %d)",
-		lftDown, rgtDown, x, y, tx, ty))
+	err = drawTrain(screen)
+	if err != nil {
+		return err
+	}
 
+	x, y := ebiten.CursorPosition()
+	err = drawCursor(x, y, screen)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func drawCursor(x int, y int, screen *ebiten.Image) error {
+	op := &ebiten.DrawImageOptions{}
+	// get top-left coordinates of the nearest tile
+	px, py := tileToPosition(positionToTile(x, y))
+	op.GeoM.Translate(float64(px), float64(py))
+
+	sx, sy := getTileCoordinates(cursor, tilesImage)
+	sprite := tilesImage.SubImage(image.Rect(sx, sy, sx+tileSize, sy+tileSize))
+	err := screen.DrawImage(sprite.(*ebiten.Image), op)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -178,12 +225,35 @@ func drawTiles(screen *ebiten.Image) error {
 	return nil
 }
 
-// positionToTile returns tile coordinate encompassing pixel (x, y) coordinates
+func drawTrain(screen *ebiten.Image) error {
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(train.x, train.y)
+
+	sx, sy := getTileCoordinates(trainSprite, tilesImage)
+	sprite := tilesImage.SubImage(image.Rect(sx, sy, sx+tileSize, sy+tileSize))
+	err := screen.DrawImage(sprite.(*ebiten.Image), op)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// positionToTileOrdinal returns ordinal number of a tile encompassing (x, y) position
+func positionToTileOrdinal(x int, y int) (t int) {
+	return tileToOrdinal(positionToTile(x, y))
+}
+
+// positionToTile returns matrix coordinates of a tile encompassing (x, y) position
 func positionToTile(x int, y int) (tx int, ty int) {
 	return (x - x%tileSize) / tileSize, (y - y%tileSize) / tileSize
 }
 
-// tileToOrdinal returns ordinal number of (x, y) coordinates of a tile
+// tileToPosition returns position of top-left corner of a tile with (tx, ty) coordinates
+func tileToPosition(tx int, ty int) (x int, y int) {
+	return tx * tileSize, ty * tileSize
+}
+
+// tileToOrdinal returns ordinal number of a tile with (tx, ty) matrix coordinates
 func tileToOrdinal(tx int, ty int) int {
 	return tilesPerRow*ty + tx
 }
@@ -199,4 +269,5 @@ func main() {
 	if err := ebiten.Run(update, screenWidth, screenHeight, 2, "Tiles"); err != nil {
 		log.Fatal(err)
 	}
+	done <- true
 }
