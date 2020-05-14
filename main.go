@@ -13,7 +13,7 @@ import (
 const (
 	tileSize     = 16
 	screenWidth  = 320
-	screenHeight = 240
+	screenHeight = 240 // 20 x 15 tiles
 	tilesPerRow  = screenWidth / tileSize
 )
 
@@ -23,18 +23,18 @@ var (
 	tiles      = []int{
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 16, 17, 17, 17, 17, 24, 17, 17, 17, 17, 17, 18, 0, 0, 0, 0,
-		0, 0, 0, 0, 19, 17, 17, 17, 17, 29, 17, 17, 17, 17, 17, 23, 0, 0, 0, 0,
-		0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0,
-		0, 0, 0, 0, 21, 0, 0, 1, 2, 14, 2, 2, 3, 0, 0, 21, 0, 0, 0, 0,
-		0, 0, 0, 0, 21, 0, 0, 6, 0, 6, 0, 0, 6, 0, 0, 21, 0, 0, 0, 0,
-		0, 0, 0, 0, 21, 0, 0, 6, 0, 6, 0, 0, 6, 0, 0, 21, 0, 0, 0, 0,
-		0, 0, 0, 0, 21, 0, 0, 9, 2, 7, 2, 2, 8, 0, 0, 21, 0, 0, 0, 0,
-		0, 0, 0, 0, 21, 0, 0, 6, 0, 6, 0, 0, 6, 0, 0, 21, 0, 0, 0, 0,
-		0, 0, 0, 0, 21, 0, 0, 6, 0, 6, 0, 0, 6, 0, 0, 21, 0, 0, 0, 0,
-		0, 0, 0, 0, 21, 0, 0, 11, 2, 12, 2, 2, 13, 0, 16, 28, 0, 0, 0, 0,
-		0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 16, 28, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 26, 17, 17, 17, 17, 17, 17, 17, 17, 28, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	}
 )
@@ -76,6 +76,18 @@ func update(screen *ebiten.Image) error {
 		return nil
 	}
 
+	x, y := ebiten.CursorPosition()
+	lftDown := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
+	rgtDown := ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight)
+	tx, ty := positionToTile(x, y)
+
+	if lftDown {
+		placeTile(tx, ty)
+	}
+	if rgtDown {
+		deleteTile(tx, ty)
+	}
+
 	err := drawBackground(screen)
 	if err != nil {
 		return err
@@ -86,14 +98,30 @@ func update(screen *ebiten.Image) error {
 		return err
 	}
 
-	x, y := ebiten.CursorPosition()
-	lftDown := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
-	rgtDown := ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight)
 	ebitenutil.DebugPrint(screen, fmt.Sprintf(
-		"left mouse down: %t\nrght mouse down: %t\ncoordinates (%d, %d)",
-		lftDown, rgtDown, x, y))
+		"left mouse down: %t\nrght mouse down: %t\npos: (%d, %d)\ntile: (%d, %d)",
+		lftDown, rgtDown, x, y, tx, ty))
 
 	return nil
+}
+
+func isEmpty(tx int, ty int) bool {
+	t := tileToOrdinal(tx, ty)
+	if t < 0 || t >= len(tiles) {
+		return true
+	} else {
+		return tiles[t] == 0
+	}
+}
+
+func deleteTile(tx int, ty int) {
+	t := tileToOrdinal(tx, ty)
+	tiles[t] = 0
+}
+
+func placeTile(tx int, ty int) {
+	t := tileToOrdinal(tx, ty)
+	tiles[t] = 20
 }
 
 func drawBackground(screen *ebiten.Image) error {
@@ -120,7 +148,7 @@ func drawTiles(screen *ebiten.Image) error {
 		y := float64(i/tilesPerRow) * tileSize
 		op.GeoM.Translate(x, y)
 
-		sx, sy := getTileCoordinates(t, tilesImage, tileSize)
+		sx, sy := getTileCoordinates(t, tilesImage)
 		sprite := tilesImage.SubImage(image.Rect(sx, sy, sx+tileSize, sy+tileSize))
 		err := screen.DrawImage(sprite.(*ebiten.Image), op)
 		if err != nil {
@@ -130,9 +158,19 @@ func drawTiles(screen *ebiten.Image) error {
 	return nil
 }
 
-// getTileCoordinates returns tile top-left coordinates in the image with a given
-// square tile size and the ordinal number of a tile.
-func getTileCoordinates(t int, img *ebiten.Image, tileSize int) (x int, y int) {
+// positionToTile returns tile coordinate encompassing pixel (x, y) coordinates
+func positionToTile(x int, y int) (tx int, ty int) {
+	return (x - x%tileSize) / tileSize, (y - y%tileSize) / tileSize
+}
+
+// tileToOrdinal returns ordinal number of (x, y) coordinates of a tile
+func tileToOrdinal(tx int, ty int) int {
+	return tilesPerRow*ty + tx
+}
+
+// getTileCoordinates returns tile top-left coordinates in the image
+// from a given ordinal number of a tile.
+func getTileCoordinates(t int, img *ebiten.Image) (x int, y int) {
 	width, _ := img.Size()
 	return t % (width / tileSize) * tileSize, t / (width / tileSize) * tileSize
 }
