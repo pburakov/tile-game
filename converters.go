@@ -1,4 +1,4 @@
-package draw
+package main
 
 // TileToPosition returns position of top-left corner of a tile with (tx, ty) coordinates
 func TileToPosition(tx int, ty int) (x int, y int) {

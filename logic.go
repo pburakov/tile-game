@@ -1,7 +1,6 @@
-package logic
+package main
 
 import (
-	"github.com/pburakov/tile-game/world"
 	"log"
 	"time"
 )
@@ -32,8 +31,10 @@ func launchClock() {
 	}()
 }
 
-// cycle updates inner state
+// cycle updates entities state and game logic
 func cycle() {
-	world.Train.X += world.Train.XVelocity
-	world.Train.X += world.Train.YVelocity
+	for _, t := range trains {
+		t.X += t.XVelocity
+		t.X += t.YVelocity
+	}
 }

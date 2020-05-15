@@ -1,4 +1,4 @@
-package entity
+package main
 
 type Train struct {
 	X, Y      float64
