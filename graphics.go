@@ -18,19 +18,19 @@ func DrawCursor(x int, y int, screen *ebiten.Image) error {
 	px, py := TileToPosition(PositionToTile(x, y))
 	op.GeoM.Translate(float64(px), float64(py))
 
-	err := screen.DrawImage(getSprite(cursor).(*ebiten.Image), op)
+	err := screen.DrawImage(getTileSprite(cursor).(*ebiten.Image), op)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func DrawTiles(tiles *[]byte, screen *ebiten.Image) error {
-	for i, t := range *tiles {
+func DrawTiles(m *Map, screen *ebiten.Image) error {
+	for i, t := range m.getAll() {
 		op := &ebiten.DrawImageOptions{}
 		op.GeoM.Translate(OrdinalToPosition(i))
 
-		err := screen.DrawImage(getSprite(t).(*ebiten.Image), op)
+		err := screen.DrawImage(getTileSprite(t).(*ebiten.Image), op)
 		if err != nil {
 			return err
 		}
@@ -41,9 +41,9 @@ func DrawTiles(tiles *[]byte, screen *ebiten.Image) error {
 func DrawTrains(trains *[]*Train, screen *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
 	for _, t := range *trains {
-		op.GeoM.Translate(t.X, t.Y)
+		op.GeoM.Translate(t.Position())
 
-		err := screen.DrawImage(getSprite(train).(*ebiten.Image), op)
+		err := screen.DrawImage(trainSprite.(*ebiten.Image), op)
 		if err != nil {
 			return err
 		}
@@ -56,7 +56,7 @@ func DrawBackground(screen *ebiten.Image) error {
 		op := &ebiten.DrawImageOptions{}
 		op.GeoM.Translate(OrdinalToPosition(i))
 
-		err := screen.DrawImage(getSprite(grass).(*ebiten.Image), op)
+		err := screen.DrawImage(getTileSprite(grass).(*ebiten.Image), op)
 		if err != nil {
 			return err
 		}

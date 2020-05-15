@@ -34,7 +34,10 @@ func launchClock() {
 // cycle updates entities state and game logic
 func cycle() {
 	for _, t := range trains {
-		t.X += t.XVelocity
-		t.X += t.YVelocity
+		moveTrain(t)
 	}
+}
+
+func moveTrain(t *Train) {
+	t.X += t.BaseVelocity
 }

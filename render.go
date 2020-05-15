@@ -14,7 +14,7 @@ func Update(screen *ebiten.Image) error {
 		return err
 	}
 
-	err = DrawTiles(&tiles, screen)
+	err = DrawTiles(&world, screen)
 	if err != nil {
 		return err
 	}

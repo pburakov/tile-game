@@ -11,7 +11,6 @@ import (
 const (
 	none   = byte(0x00)
 	grass  = byte(0x19)
-	train  = byte(0x0f)
 	cursor = byte(0x14)
 
 	// To construct a tile, combine the starting tile with an offset number
@@ -33,7 +32,15 @@ const (
 	hd  = byte(0x0e) // Horizontal-Down T-section
 )
 
-var sprites = make(map[byte]image.Image)
+const (
+	trainWidth  = 25
+	trainHeight = 8
+	trainHorX   = 0
+	trainHorY   = 96
+)
+
+var tileSprites = make(map[byte]image.Image)
+var trainSprite image.Image
 
 func init() {
 	log.SetFlags(0)
@@ -43,21 +50,22 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	sprites[none] = loadSprite(none, img)
-	sprites[grass] = loadSprite(grass, img)
-	sprites[train] = loadSprite(train, img)
-	sprites[cursor] = loadSprite(cursor, img)
-	sprites[rail+ver] = loadSprite(rail+ver, img)
-	sprites[rail+hor] = loadSprite(rail+hor, img)
-	sprites[rail+cro] = loadSprite(rail+cro, img)
-	sprites[rail+dl] = loadSprite(rail+dl, img)
-	sprites[rail+dr] = loadSprite(rail+dr, img)
-	sprites[rail+ul] = loadSprite(rail+ul, img)
-	sprites[rail+ur] = loadSprite(rail+ur, img)
-	sprites[rail+vl] = loadSprite(rail+vl, img)
-	sprites[rail+vr] = loadSprite(rail+vr, img)
-	sprites[rail+hu] = loadSprite(rail+hu, img)
-	sprites[rail+hd] = loadSprite(rail+hd, img)
+	tileSprites[none] = loadTileSprite(none, img)
+	tileSprites[grass] = loadTileSprite(grass, img)
+	tileSprites[cursor] = loadTileSprite(cursor, img)
+	tileSprites[rail+ver] = loadTileSprite(rail+ver, img)
+	tileSprites[rail+hor] = loadTileSprite(rail+hor, img)
+	tileSprites[rail+cro] = loadTileSprite(rail+cro, img)
+	tileSprites[rail+dl] = loadTileSprite(rail+dl, img)
+	tileSprites[rail+dr] = loadTileSprite(rail+dr, img)
+	tileSprites[rail+ul] = loadTileSprite(rail+ul, img)
+	tileSprites[rail+ur] = loadTileSprite(rail+ur, img)
+	tileSprites[rail+vl] = loadTileSprite(rail+vl, img)
+	tileSprites[rail+vr] = loadTileSprite(rail+vr, img)
+	tileSprites[rail+hu] = loadTileSprite(rail+hu, img)
+	tileSprites[rail+hd] = loadTileSprite(rail+hd, img)
+
+	trainSprite = loadCustomSprite(trainHorX, trainHorY, trainWidth, trainHeight, img)
 
 	log.Print("loaded image assets")
 }
@@ -79,14 +87,18 @@ func loadImage(path string) (*ebiten.Image, error) {
 	return ebitenImg, nil
 }
 
-func loadSprite(t byte, img *ebiten.Image) image.Image {
+func loadCustomSprite(x int, y int, width int, height int, img *ebiten.Image) image.Image {
+	return img.SubImage(image.Rect(x, y, x+width, y+height))
+}
+
+func loadTileSprite(t byte, img *ebiten.Image) image.Image {
 	width, _ := img.Size()
 	sx, sy := int(t)%(width/TileSize)*TileSize, int(t)/(width/TileSize)*TileSize
 	return img.SubImage(image.Rect(sx, sy, sx+TileSize, sy+TileSize))
 }
 
-func getSprite(t byte) image.Image {
-	sprite, ok := sprites[t]
+func getTileSprite(t byte) image.Image {
+	sprite, ok := tileSprites[t]
 	if !ok {
 		log.Fatalf("error loading sprite %d", t)
 	}
