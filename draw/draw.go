@@ -3,6 +3,7 @@ package draw
 import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/pburakov/tile-game/entity"
+	"github.com/pburakov/tile-game/world"
 	"image"
 	_ "image/png"
 	"log"
@@ -106,6 +107,35 @@ func loadSprite(t byte, img *ebiten.Image) image.Image {
 func getTileCoordinates(t byte, img *ebiten.Image) (x int, y int) {
 	width, _ := img.Size()
 	return int(t) % (width / TileSize) * TileSize, int(t) / (width / TileSize) * TileSize
+}
+
+func Update(screen *ebiten.Image) error {
+	if ebiten.IsDrawingSkipped() {
+		return nil
+	}
+
+	err := Background(screen)
+	if err != nil {
+		return err
+	}
+
+	err = Tiles(&world.Tiles, screen)
+	if err != nil {
+		return err
+	}
+
+	err = Train(&world.Train, screen)
+	if err != nil {
+		return err
+	}
+
+	x, y := ebiten.CursorPosition()
+	err = Cursor(x, y, screen)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func Cursor(x int, y int, screen *ebiten.Image) error {
