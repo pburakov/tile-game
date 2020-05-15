@@ -19,13 +19,13 @@ func Update(screen *ebiten.Image) error {
 		return err
 	}
 
-	err = DrawTrains(&trains, screen)
+	x, y := ebiten.CursorPosition()
+	err = DrawCursor(x, y, screen)
 	if err != nil {
 		return err
 	}
 
-	x, y := ebiten.CursorPosition()
-	err = DrawCursor(x, y, screen)
+	err = DrawTrains(&trains, screen)
 	if err != nil {
 		return err
 	}
