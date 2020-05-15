@@ -67,6 +67,7 @@ func init() {
 	sprites[rail+vr] = loadSprite(rail+vr, img)
 	sprites[rail+hu] = loadSprite(rail+hu, img)
 	sprites[rail+hd] = loadSprite(rail+hd, img)
+
 	log.Print("loaded image assets")
 }
 

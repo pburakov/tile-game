@@ -11,7 +11,10 @@ var (
 )
 
 func init() {
+	log.SetFlags(0)
+
 	launchClock()
+	log.Print("launched logic clock")
 }
 
 func launchClock() {
@@ -27,7 +30,6 @@ func launchClock() {
 			}
 		}
 	}()
-	log.Print("launched logic clock")
 }
 
 // cycle updates inner state
