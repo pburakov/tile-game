@@ -35,4 +35,5 @@ var trains = []*Train{{
 	X:            float64(0),
 	Y:            float64(198),
 	BaseVelocity: 1.0,
+	Target:       Point{64, 198},
 }}
