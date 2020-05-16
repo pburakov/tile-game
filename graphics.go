@@ -40,14 +40,20 @@ func DrawTiles(m *Map, screen *ebiten.Image) error {
 }
 
 func DrawTrains(trains *[]*Train, screen *ebiten.Image) error {
-	op := &ebiten.DrawImageOptions{}
 	for _, t := range *trains {
-		v := t.TopLeft()
-		op.GeoM.Translate(v.X, v.Y)
-
-		err := screen.DrawImage(trainSprite.(*ebiten.Image), op)
-		if err != nil {
-			return err
+		for i, c := range t.Cars {
+			v := c.TopLeft()
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(v.X, v.Y)
+			var err error
+			if i == 0 {
+				err = screen.DrawImage(headSprite.(*ebiten.Image), op)
+			} else {
+				err = screen.DrawImage(carSprite.(*ebiten.Image), op)
+			}
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil

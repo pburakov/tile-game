@@ -39,6 +39,8 @@ func cycle() {
 }
 
 func moveTrain(t *Train) {
-	u := t.Position.Unit(t.BaseVelocity, t.Target)
-	t.Position.Add(u)
+	for _, c := range t.Cars {
+		u := c.Position.Unit(t.BaseVelocity, c.Target)
+		c.Position.Add(u)
+	}
 }

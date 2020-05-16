@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/hajimehoshi/ebiten"
 	"image"
 	"log"
 	"os"
+
+	"github.com/hajimehoshi/ebiten"
 )
 
 // sprite ordinal numbers
@@ -33,14 +34,17 @@ const (
 )
 
 const (
-	trainWidth  = 25
-	trainHeight = 8
-	trainHorX   = 0
-	trainHorY   = 96
+	carWidth  = 25
+	carHeight = 8
+	carHorX   = 7
+	carHorY   = 96
+	headHorX  = 32
+	headHorY  = 96
 )
 
 var tileSprites = make(map[byte]image.Image)
-var trainSprite image.Image
+var headSprite image.Image
+var carSprite image.Image
 
 func init() {
 	log.SetFlags(0)
@@ -65,7 +69,8 @@ func init() {
 	tileSprites[rail+hu] = loadTileSprite(rail+hu, img)
 	tileSprites[rail+hd] = loadTileSprite(rail+hd, img)
 
-	trainSprite = loadCustomSprite(trainHorX, trainHorY, trainWidth, trainHeight, img)
+	headSprite = loadCustomSprite(headHorX, headHorY, carWidth, carHeight, img)
+	carSprite = loadCustomSprite(carHorX, carHorY, carWidth, carHeight, img)
 
 	log.Print("loaded image assets")
 }

@@ -16,6 +16,8 @@ func init() {
 	world.setTile(1, 12, rail+hor)
 	world.setTile(2, 12, rail+hor)
 	world.setTile(3, 12, rail+hor)
+	world.setTile(4, 12, rail+hor)
+	world.setTile(5, 12, rail+hor)
 }
 
 func (m *Map) setTile(tx int, ty int, t byte) {
@@ -32,7 +34,20 @@ func (m *Map) getAll() *[MapWidth * MapHeight]byte {
 }
 
 var trains = []*Train{{
-	Position:     Vector{float64(0), float64(198)},
 	BaseVelocity: 1.0,
-	Target:       Vector{64, 198},
+	Cars: []*Car{
+		{
+			Position: Vector{0, 198},
+			Target:   Vector{96, 198},
+		}, {
+			Position: Vector{-25, 198},
+			Target:   Vector{96 - 25, 198},
+		}, {
+			Position: Vector{-50, 198},
+			Target:   Vector{96 - 50, 198},
+		}, {
+			Position: Vector{-75, 198},
+			Target:   Vector{96 - 75, 198},
+		},
+	},
 }}

@@ -1,15 +1,19 @@
 package main
 
 type Train struct {
-	Position     Vector // Position of train's geometric center
 	BaseVelocity float64
-	Target       Vector // A destination point the train is currently moving into
+	Cars         []*Car
+}
+
+type Car struct {
+	Position Vector // Position of train's geometric center
+	Target   Vector // A destination point the train is currently moving into
 }
 
 // TrainPosition returns position of train's top left corner
-func (t *Train) TopLeft() Vector {
+func (c *Car) TopLeft() Vector {
 	// since there's only one sprite now. shift geometric center towards forward axis.
 	// might lead to realistic collision detection/ this will change for
 	// multi-directional trains
-	return Vector{-10 + t.Position.X - (trainWidth / 2), t.Position.Y - (trainHeight / 2)}
+	return Vector{-10 + c.Position.X - (carWidth / 2), c.Position.Y - (carHeight / 2)}
 }
