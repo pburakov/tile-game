@@ -18,6 +18,12 @@ func init() {
 	world.setTile(3, 12, rail+hor)
 	world.setTile(4, 12, rail+hor)
 	world.setTile(5, 12, rail+hor)
+	world.setTile(6, 12, rail+ul)
+	world.setTile(6, 11, rail+dr)
+	world.setTile(7, 11, rail+hor)
+	world.setTile(8, 11, rail+hor)
+	world.setTile(9, 11, rail+hor)
+	world.setTile(10, 11, rail+hor)
 }
 
 func (m *Map) setTile(tx int, ty int, t byte) {
@@ -41,13 +47,13 @@ var trains = []*Train{{
 			Target:   Vector{96, 198},
 		}, {
 			Position: Vector{-25, 198},
-			Target:   Vector{96 - 25, 198},
+			Target:   Vector{96, 198},
 		}, {
 			Position: Vector{-50, 198},
-			Target:   Vector{96 - 50, 198},
+			Target:   Vector{96, 198},
 		}, {
 			Position: Vector{-75, 198},
-			Target:   Vector{96 - 75, 198},
+			Target:   Vector{96, 198},
 		},
 	},
 }}

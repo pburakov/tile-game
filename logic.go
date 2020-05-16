@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"math"
 	"time"
 )
 
@@ -40,7 +41,30 @@ func cycle() {
 
 func moveTrain(t *Train) {
 	for _, c := range t.Cars {
+		if atTarget(c) {
+			// reset position to match target
+			// reset a potential rounding and float errors
+			c.Position.X = c.Target.X
+			c.Position.Y = c.Target.Y
+			findNextTarget(c)
+		}
 		u := c.Position.Unit(t.BaseVelocity, c.Target)
 		c.Position.Add(u)
 	}
+}
+
+func findNextTarget(c *Car) {
+	// emulate target switching for now
+	if c.Target.X == 96 {
+		c.Target.X = 96 + 16
+		c.Target.Y = 198 - 16
+	} else if c.Target.X == 96+16 {
+		c.Target.X = 96 + 16 + 64
+		c.Target.Y = 198 - 16
+	}
+}
+
+func atTarget(c *Car) bool {
+	return math.Abs(c.Position.X-c.Target.X) < 1.0 &&
+		math.Abs(c.Position.Y-c.Target.Y) < 1.0
 }
