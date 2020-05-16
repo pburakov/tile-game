@@ -32,8 +32,7 @@ func (m *Map) getAll() *[MapWidth * MapHeight]byte {
 }
 
 var trains = []*Train{{
-	X:            float64(0),
-	Y:            float64(198),
+	Position:     Vector{float64(0), float64(198)},
 	BaseVelocity: 1.0,
-	Target:       Point{64, 198},
+	Target:       Vector{64, 198},
 }}

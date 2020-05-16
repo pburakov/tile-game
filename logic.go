@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"math"
 	"time"
 )
 
@@ -40,10 +39,6 @@ func cycle() {
 }
 
 func moveTrain(t *Train) {
-	// calculate vector to target with x and y components
-	dx := (t.Target.X - t.X)
-	dy := (t.Target.Y - t.Y)
-	theta := math.Atan2(dy, dx)
-	t.X += t.BaseVelocity * math.Cos(theta)
-	t.Y += t.BaseVelocity * math.Sin(theta)
+	u := t.Position.Unit(t.BaseVelocity, t.Target)
+	t.Position.Add(u)
 }
