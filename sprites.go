@@ -36,9 +36,9 @@ const (
 const (
 	carWidth  = 25
 	carHeight = 8
-	carHorX   = 7
-	carHorY   = 96
-	headHorX  = 32
+	carHorX   = 56
+	carHorY   = 105
+	headHorX  = 55
 	headHorY  = 96
 )
 
