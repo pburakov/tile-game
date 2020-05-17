@@ -43,17 +43,17 @@ var trains = []*Train{{
 	BaseVelocity: 1.0,
 	Cars: []*Car{
 		{
-			Position: Vector{0, 198},
-			Target:   Vector{96, 198},
+			Position: Vec2{0, 198},
+			Target:   Vec2{96, 198},
 		}, {
-			Position: Vector{-25, 198},
-			Target:   Vector{96, 198},
+			Position: Vec2{-25, 198},
+			Target:   Vec2{96, 198},
 		}, {
-			Position: Vector{-50, 198},
-			Target:   Vector{96, 198},
+			Position: Vec2{-50, 198},
+			Target:   Vec2{96, 198},
 		}, {
-			Position: Vector{-75, 198},
-			Target:   Vector{96, 198},
+			Position: Vec2{-75, 198},
+			Target:   Vec2{96, 198},
 		},
 	},
 }}

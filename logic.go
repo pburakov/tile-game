@@ -48,7 +48,8 @@ func moveTrain(t *Train) {
 			c.Position.Y = c.Target.Y
 			findNextTarget(c)
 		}
-		u := c.Position.Unit(t.BaseVelocity, c.Target)
+		angle := c.Position.Angle(c.Target)
+		u := c.Position.Unit(angle, t.BaseVelocity, c.Target)
 		c.Position.Add(u)
 	}
 }
