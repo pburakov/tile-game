@@ -56,12 +56,12 @@ func moveTrain(t *Train) {
 
 func findNextTarget(c *Car) {
 	// emulate target switching for now
-	if c.Target.X == 96 {
-		c.Target.X = 96 + 16
-		c.Target.Y = 198 - 16
-	} else if c.Target.X == 96+16 {
-		c.Target.X = 96 + 16 + 64
-		c.Target.Y = 198 - 16
+	if c.Target.X == 48 {
+		c.Target.X = 48 + 16*2
+		c.Target.Y = 198 - 16*2
+	} else if c.Target.X == 48+16*2 {
+		c.Target.X = 48 + 16*5
+		c.Target.Y = 198 - 16*2
 	}
 }
 

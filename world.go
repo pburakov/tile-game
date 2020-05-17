@@ -15,15 +15,14 @@ func init() {
 	world.setTile(0, 12, rail+hor)
 	world.setTile(1, 12, rail+hor)
 	world.setTile(2, 12, rail+hor)
-	world.setTile(3, 12, rail+hor)
-	world.setTile(4, 12, rail+hor)
-	world.setTile(5, 12, rail+hor)
-	world.setTile(6, 12, rail+ul)
-	world.setTile(6, 11, rail+dr)
-	world.setTile(7, 11, rail+hor)
-	world.setTile(8, 11, rail+hor)
-	world.setTile(9, 11, rail+hor)
-	world.setTile(10, 11, rail+hor)
+	world.setTile(3, 12, rail+ul)
+	world.setTile(3, 11, rail+dr)
+	world.setTile(4, 11, rail+ul)
+	world.setTile(4, 10, rail+dr)
+	world.setTile(5, 10, rail+hor)
+	world.setTile(6, 10, rail+hor)
+	world.setTile(7, 10, rail+hor)
+	world.setTile(8, 10, rail+hor)
 }
 
 func (m *Map) setTile(tx int, ty int, t byte) {
@@ -44,16 +43,16 @@ var trains = []*Train{{
 	Cars: []*Car{
 		{
 			Position: Vec2{0, 198},
-			Target:   Vec2{96, 198},
+			Target:   Vec2{48, 198},
 		}, {
 			Position: Vec2{-25, 198},
-			Target:   Vec2{96, 198},
+			Target:   Vec2{48, 198},
 		}, {
 			Position: Vec2{-25 * 2, 198},
-			Target:   Vec2{96, 198},
+			Target:   Vec2{48, 198},
 		}, {
 			Position: Vec2{-25 * 3, 198},
-			Target:   Vec2{96, 198},
+			Target:   Vec2{48, 198},
 		},
 	},
 }}
