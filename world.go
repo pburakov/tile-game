@@ -40,7 +40,7 @@ func (m *Map) getAll() *[MapWidth * MapHeight]byte {
 }
 
 var trains = []*Train{{
-	BaseVelocity: 1.0,
+	Velocity: 1.0,
 	Cars: []*Car{
 		{
 			Position: Vec2{0, 198},
@@ -49,10 +49,10 @@ var trains = []*Train{{
 			Position: Vec2{-25, 198},
 			Target:   Vec2{96, 198},
 		}, {
-			Position: Vec2{-50, 198},
+			Position: Vec2{-25 * 2, 198},
 			Target:   Vec2{96, 198},
 		}, {
-			Position: Vec2{-75, 198},
+			Position: Vec2{-25 * 3, 198},
 			Target:   Vec2{96, 198},
 		},
 	},

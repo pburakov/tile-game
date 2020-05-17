@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/hajimehoshi/ebiten"
 	_ "image/png"
+
+	"github.com/hajimehoshi/ebiten"
 )
 
 const (
@@ -18,7 +19,7 @@ func DrawCursor(x int, y int, screen *ebiten.Image) error {
 	v := TileToPosition(PositionToTile(x, y))
 	op.GeoM.Translate(v.X, v.Y)
 
-	err := screen.DrawImage(getTileSprite(cursor).(*ebiten.Image), op)
+	err := screen.DrawImage(GetTileSprite(cursor).(*ebiten.Image), op)
 	if err != nil {
 		return err
 	}
@@ -31,7 +32,7 @@ func DrawTiles(m *Map, screen *ebiten.Image) error {
 		v := OrdinalToPosition(i)
 		op.GeoM.Translate(v.X, v.Y)
 
-		err := screen.DrawImage(getTileSprite(t).(*ebiten.Image), op)
+		err := screen.DrawImage(GetTileSprite(t).(*ebiten.Image), op)
 		if err != nil {
 			return err
 		}
@@ -42,15 +43,17 @@ func DrawTiles(m *Map, screen *ebiten.Image) error {
 func DrawTrains(trains *[]*Train, screen *ebiten.Image) error {
 	for _, t := range *trains {
 		for i, c := range t.Cars {
-			v := c.TopLeft()
+			angle := c.Position.Angle(c.Target)
+			var img *ebiten.Image
+			if i == 0 {
+				img = GetHeadSprite(DirectionFromAngle(angle)).(*ebiten.Image)
+			} else {
+				img = GetCarSprite(DirectionFromAngle(angle)).(*ebiten.Image)
+			}
+			v := CarTopLeft(c, img)
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(v.X, v.Y)
-			var err error
-			if i == 0 {
-				err = screen.DrawImage(headSprite.(*ebiten.Image), op)
-			} else {
-				err = screen.DrawImage(carSprite.(*ebiten.Image), op)
-			}
+			err := screen.DrawImage(img, op)
 			if err != nil {
 				return err
 			}
@@ -65,7 +68,7 @@ func DrawBackground(screen *ebiten.Image) error {
 		v := OrdinalToPosition(i)
 		op.GeoM.Translate(v.X, v.Y)
 
-		err := screen.DrawImage(getTileSprite(grass).(*ebiten.Image), op)
+		err := screen.DrawImage(GetTileSprite(grass).(*ebiten.Image), op)
 		if err != nil {
 			return err
 		}

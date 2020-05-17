@@ -34,17 +34,19 @@ const (
 )
 
 const (
-	carWidth  = 25
-	carHeight = 8
-	carHorX   = 56
-	carHorY   = 105
-	headHorX  = 55
-	headHorY  = 96
+	left      = "left"
+	upLeft    = "upLeft"
+	up        = "up"
+	upRight   = "upRight"
+	right     = "right"
+	downRight = "downRight"
+	down      = "down"
+	downLeft  = "downLeft"
 )
 
 var tileSprites = make(map[byte]image.Image)
-var headSprite image.Image
-var carSprite image.Image
+var headSprites = make(map[string]image.Image)
+var carSprites = make(map[string]image.Image)
 
 func init() {
 	log.SetFlags(0)
@@ -54,6 +56,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	tileSprites[none] = loadTileSprite(none, img)
 	tileSprites[grass] = loadTileSprite(grass, img)
 	tileSprites[cursor] = loadTileSprite(cursor, img)
@@ -69,8 +72,11 @@ func init() {
 	tileSprites[rail+hu] = loadTileSprite(rail+hu, img)
 	tileSprites[rail+hd] = loadTileSprite(rail+hd, img)
 
-	headSprite = loadCustomSprite(headHorX, headHorY, carWidth, carHeight, img)
-	carSprite = loadCustomSprite(carHorX, carHorY, carWidth, carHeight, img)
+	headSprites[left] = loadCustomSprite(55, 96, 25, 8, img)
+	headSprites[upLeft] = loadCustomSprite(16, 96, 17, 16, img)
+
+	carSprites[left] = loadCustomSprite(56, 105, 25, 8, img)
+	carSprites[upLeft] = loadCustomSprite(0, 96, 15, 16, img)
 
 	log.Print("loaded image assets")
 }
@@ -102,10 +108,26 @@ func loadTileSprite(t byte, img *ebiten.Image) image.Image {
 	return img.SubImage(image.Rect(sx, sy, sx+TileSize, sy+TileSize))
 }
 
-func getTileSprite(t byte) image.Image {
+func GetTileSprite(t byte) image.Image {
 	sprite, ok := tileSprites[t]
 	if !ok {
 		log.Fatalf("error loading sprite %d", t)
+	}
+	return sprite
+}
+
+func GetHeadSprite(direction string) image.Image {
+	sprite, ok := headSprites[direction]
+	if !ok {
+		log.Fatalf("error loading head sprite %s", direction)
+	}
+	return sprite
+}
+
+func GetCarSprite(direction string) image.Image {
+	sprite, ok := carSprites[direction]
+	if !ok {
+		log.Fatalf("error loading car sprite %s", direction)
 	}
 	return sprite
 }
