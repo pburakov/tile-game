@@ -26,8 +26,7 @@ func TileToOrdinal(tx int, ty int) int {
 }
 
 func AngleToDirection(rad float64) string {
-	// TODO: fix me, calculates diagonals incorrectly
-	a := RadToAngle(-rad)
+	a := RadToDegrees(rad)
 	if 30 < a && a <= 60 {
 		return upRight
 	} else if 120 < a && a <= 150 {
@@ -42,8 +41,11 @@ func AngleToDirection(rad float64) string {
 	return right
 }
 
-func RadToAngle(r float64) int {
-	return int(math.Round(180*r/math.Pi)) % 360
+func RadToDegrees(r float64) int {
+	if r < 0 {
+		return int(math.Abs(math.Round(180*r/math.Pi))) % 360
+	}
+	return int(math.Round(180*(2*math.Pi-r)/math.Pi)) % 360
 }
 
 // carTopLeft returns position of car's top left corner based on sprite
