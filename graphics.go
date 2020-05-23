@@ -31,7 +31,7 @@ func DrawTiles(m *Map, screen *ebiten.Image) error {
 		v := OrdinalToPosition(i)
 		op.GeoM.Translate(v.X, v.Y)
 
-		err := screen.DrawImage(GetTileSprite(t).(*ebiten.Image), op)
+		err := screen.DrawImage(GetTileSprite(t.Sprite).(*ebiten.Image), op)
 		if err != nil {
 			return err
 		}

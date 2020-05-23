@@ -6,35 +6,23 @@ const (
 )
 
 type Map struct {
-	tiles [MapWidth * MapHeight]byte
+	tiles [MapWidth * MapHeight]Tile
 }
 
 var world = Map{}
 
-func init() {
-	world.setTile(0, 12, rail+hor)
-	world.setTile(1, 12, rail+hor)
-	world.setTile(2, 12, rail+hor)
-	world.setTile(3, 12, rail+ul)
-	world.setTile(3, 11, rail+dr)
-	world.setTile(4, 11, rail+ul)
-	world.setTile(4, 10, rail+dr)
-	world.setTile(5, 10, rail+hor)
-	world.setTile(6, 10, rail+hor)
-	world.setTile(7, 10, rail+hor)
-	world.setTile(8, 10, rail+hor)
-}
+func init() {}
 
-func (m *Map) setTile(tx int, ty int, t byte) {
+func (m *Map) setTile(tx int, ty int, t Tile) {
 	i := TileToOrdinal(tx, ty)
 	m.tiles[i] = t
 }
 
-func (m *Map) getTile(tx, ty int) byte {
+func (m *Map) getTile(tx, ty int) Tile {
 	i := TileToOrdinal(tx, ty)
 	return m.tiles[i]
 }
-func (m *Map) getAll() *[MapWidth * MapHeight]byte {
+func (m *Map) getAll() *[MapWidth * MapHeight]Tile {
 	return &m.tiles
 }
 
