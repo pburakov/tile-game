@@ -74,6 +74,8 @@ func init() {
 
 	headSprites[right] = loadCustomSprite(55, 96, 25, 8, img)
 	headSprites[left] = loadCustomSprite(55, 114, 25, 8, img)
+	headSprites[up] = loadCustomSprite(0, 132, 8, 20, img)
+	headSprites[down] = loadCustomSprite(9, 132, 8, 20, img)
 	headSprites[upRight] = loadCustomSprite(17, 96, 18, 17, img)
 	headSprites[upLeft] = loadCustomSprite(17, 114, 18, 17, img)
 	headSprites[downRight] = loadCustomSprite(36, 96, 17, 17, img)
@@ -81,6 +83,8 @@ func init() {
 
 	carSprites[right] = loadCustomSprite(56, 105, 24, 8, img)
 	carSprites[left] = loadCustomSprite(56, 123, 24, 8, img)
+	carSprites[up] = loadCustomSprite(18, 132, 8, 19, img)
+	carSprites[down] = loadCustomSprite(18, 132, 8, 19, img)
 	carSprites[upRight] = loadCustomSprite(0, 96, 16, 17, img)
 	carSprites[upLeft] = loadCustomSprite(0, 114, 16, 17, img)
 	carSprites[downRight] = loadCustomSprite(0, 96, 16, 17, img)

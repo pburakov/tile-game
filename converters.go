@@ -29,12 +29,16 @@ func AngleToDirection(rad float64) string {
 	a := RadToDegrees(rad)
 	if 30 < a && a <= 60 {
 		return upRight
+	} else if 60 < a && a <= 120 {
+		return up
 	} else if 120 < a && a <= 150 {
 		return upLeft
 	} else if 150 < a && a <= 210 {
 		return left
 	} else if 210 < a && a <= 240 {
 		return downLeft
+	} else if 240 < a && a <= 300 {
+		return down
 	} else if 300 < a && a <= 330 {
 		return downRight
 	}
