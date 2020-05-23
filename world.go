@@ -38,21 +38,70 @@ func (m *Map) getAll() *[MapWidth * MapHeight]byte {
 	return &m.tiles
 }
 
-var trains = []*Train{{
-	Velocity: 1.0,
-	Cars: []*Car{
-		{
-			Position: Vec2{0, 198},
-			Target:   Vec2{48, 198},
-		}, {
-			Position: Vec2{-25, 198},
-			Target:   Vec2{48, 198},
-		}, {
-			Position: Vec2{-25 * 2, 198},
-			Target:   Vec2{48, 198},
-		}, {
-			Position: Vec2{-25 * 3, 198},
-			Target:   Vec2{48, 198},
+var trains = []*Train{
+	{
+		Velocity: 1.0,
+		Cars: []*Car{
+			{
+				Position: Vec2{160, 160},
+				Target:   Vec2{160 + 16*4, 160 - 16*0},
+			},
+		},
+	}, {
+		Velocity: 1.0,
+		Cars: []*Car{
+			{
+				Position: Vec2{160, 160},
+				Target:   Vec2{160 + 16*4, 160 - 16*4},
+			},
+		},
+	}, {
+		Velocity: 1.0,
+		Cars: []*Car{
+			{
+				Position: Vec2{160, 160},
+				Target:   Vec2{160 - 16*0, 160 - 16*4},
+			},
+		},
+	}, {
+		Velocity: 1.0,
+		Cars: []*Car{
+			{
+				Position: Vec2{160, 160},
+				Target:   Vec2{160 - 16*4, 160 - 16*4},
+			},
+		},
+	}, {
+		Velocity: 1.0,
+		Cars: []*Car{
+			{
+				Position: Vec2{160, 160},
+				Target:   Vec2{160 - 16*4, 160 - 16*0},
+			},
+		},
+	}, {
+		Velocity: 1.0,
+		Cars: []*Car{
+			{
+				Position: Vec2{160, 160},
+				Target:   Vec2{160 - 16*4, 160 + 16*4},
+			},
+		},
+	}, {
+		Velocity: 1.0,
+		Cars: []*Car{
+			{
+				Position: Vec2{160, 160},
+				Target:   Vec2{160 - 16*0, 160 + 16*4},
+			},
+		},
+	}, {
+		Velocity: 1.0,
+		Cars: []*Car{
+			{
+				Position: Vec2{160, 160},
+				Target:   Vec2{160 + 16*4, 160 + 16*4},
+			},
 		},
 	},
-}}
+}

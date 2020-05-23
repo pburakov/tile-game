@@ -72,11 +72,19 @@ func init() {
 	tileSprites[rail+hu] = loadTileSprite(rail+hu, img)
 	tileSprites[rail+hd] = loadTileSprite(rail+hd, img)
 
-	headSprites[left] = loadCustomSprite(55, 96, 25, 8, img)
-	headSprites[upLeft] = loadCustomSprite(16, 96, 17, 16, img)
+	headSprites[right] = loadCustomSprite(55, 96, 25, 8, img)
+	headSprites[left] = loadCustomSprite(55, 114, 25, 8, img)
+	headSprites[upRight] = loadCustomSprite(17, 96, 18, 17, img)
+	headSprites[upLeft] = loadCustomSprite(17, 114, 18, 17, img)
+	headSprites[downRight] = loadCustomSprite(36, 114, 17, 17, img)
+	headSprites[downLeft] = loadCustomSprite(36, 96, 17, 17, img)
 
-	carSprites[left] = loadCustomSprite(56, 105, 25, 8, img)
-	carSprites[upLeft] = loadCustomSprite(0, 96, 15, 16, img)
+	carSprites[right] = loadCustomSprite(56, 123, 24, 8, img)
+	carSprites[left] = loadCustomSprite(56, 105, 24, 8, img)
+	carSprites[upRight] = loadCustomSprite(0, 96, 16, 17, img)
+	carSprites[upLeft] = loadCustomSprite(0, 114, 16, 17, img)
+	carSprites[downRight] = loadCustomSprite(0, 114, 16, 17, img)
+	carSprites[downLeft] = loadCustomSprite(0, 96, 16, 17, img)
 
 	log.Print("loaded image assets")
 }
