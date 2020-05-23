@@ -1,7 +1,7 @@
 package main
 
 type Train struct {
-	Velocity float64
+	Velocity float64 // Train's base velocity
 	Cars     []*Car
 }
 

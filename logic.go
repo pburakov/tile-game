@@ -49,7 +49,16 @@ func moveTrain(t *Train) {
 			findNextTarget(c)
 		}
 		angle := c.Position.Angle(c.Target)
-		u := c.Position.Unit(angle, t.Velocity, c.Target)
+		direction := AngleToDirection(angle)
+
+		// Calculate car velocity, must be slower at turns
+		v := t.Velocity
+		if direction == upLeft || direction == upRight ||
+			direction == downLeft || direction == downRight {
+			v = 0.66 * t.Velocity
+		}
+
+		u := c.Position.Unit(angle, v, c.Target)
 		c.Position.Add(u)
 	}
 }

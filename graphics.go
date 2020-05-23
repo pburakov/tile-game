@@ -1,9 +1,8 @@
 package main
 
 import (
-	_ "image/png"
-
 	"github.com/hajimehoshi/ebiten"
+	_ "image/png"
 )
 
 const (
@@ -44,11 +43,12 @@ func DrawTrains(trains *[]*Train, screen *ebiten.Image) error {
 	for _, t := range *trains {
 		for i, c := range t.Cars {
 			angle := c.Position.Angle(c.Target)
+			dir := AngleToDirection(angle)
 			var img *ebiten.Image
 			if i == 0 {
-				img = GetHeadSprite(DirectionFromAngle(angle)).(*ebiten.Image)
+				img = GetHeadSprite(dir).(*ebiten.Image)
 			} else {
-				img = GetCarSprite(DirectionFromAngle(angle)).(*ebiten.Image)
+				img = GetCarSprite(dir).(*ebiten.Image)
 			}
 			v := CarTopLeft(c, img)
 			op := &ebiten.DrawImageOptions{}
