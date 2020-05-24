@@ -6,12 +6,12 @@ import (
 )
 
 // TileToPosition returns position of top-left corner of a tile with (tx, ty) coordinates
-func TileToPosition(tx int, ty int) Vec2 {
+func TileToPosition(tx, ty int) Vec2 {
 	return Vec2{float64(tx * TileSize), float64(ty * TileSize)}
 }
 
 // PositionToTile returns matrix coordinates of a tile encompassing (x, y) position
-func PositionToTile(x int, y int) (tx int, ty int) {
+func PositionToTile(x, y int) (tx int, ty int) {
 	return (x - x%TileSize) / TileSize, (y - y%TileSize) / TileSize
 }
 
@@ -21,7 +21,7 @@ func OrdinalToPosition(i int) Vec2 {
 }
 
 //TileToOrdinal returns ordinal number of a tile with (tx, ty) matrix coordinates
-func TileToOrdinal(tx int, ty int) int {
+func TileToOrdinal(tx, ty int) int {
 	return TilesPerRow*ty + tx
 }
 

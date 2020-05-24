@@ -4,23 +4,18 @@ import "github.com/hajimehoshi/ebiten"
 
 // WheelSelectorRange determines how fast/slow wheel-scrolling selector will be.
 // For macOS touchpads and mouse values 3.00 .. 5.00 work best for smooth scrolling
-const WheelSelectorRange = 3.50
+const WheelSelectorRange = 5.00
 
 var brushes = []byte{
 	rail + ver,
 	rail + hor,
-	rail + cro,
 	rail + dl,
 	rail + dr,
 	rail + ul,
 	rail + ur,
-	rail + vl,
-	rail + vr,
-	rail + hu,
-	rail + hd,
 }
 
-var maxRawWheelValue = WheelSelectorRange * float64(len(brushes)-1)
+var maxRawWheelValue = WheelSelectorRange * float64(len(brushes))
 
 // Selector represents the state of user input
 type Selector struct {
@@ -43,9 +38,13 @@ func HandleInput() {
 	selector.ApplyDelta(wy)
 
 	lftBtn := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
+	rgtBtn := ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight)
+
 	if lftBtn {
 		tx, ty := PositionToTile(selector.CurX, selector.CurY)
 		world.setTile(tx, ty, Tile{Sprite: selector.GetCurrentSelection()})
+	} else if rgtBtn {
+		world.removeTile(PositionToTile(selector.CurX, selector.CurY))
 	}
 }
 

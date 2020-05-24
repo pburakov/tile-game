@@ -110,7 +110,7 @@ func loadImage(path string) (*ebiten.Image, error) {
 	return ebitenImg, nil
 }
 
-func loadCustomSprite(x int, y int, width int, height int, img *ebiten.Image) image.Image {
+func loadCustomSprite(x, y, width, height int, img *ebiten.Image) image.Image {
 	return img.SubImage(image.Rect(x, y, x+width, y+height))
 }
 

@@ -13,14 +13,21 @@ var world = Map{}
 
 func init() {}
 
-func (m *Map) setTile(tx int, ty int, t Tile) {
+func (m *Map) setTile(tx, ty int, t Tile) {
 	i := TileToOrdinal(tx, ty)
 	m.tiles[i] = t
 }
 
-func (m *Map) getTile(tx, ty int) Tile {
+func (m *Map) getTile(tx, ty int) *Tile {
 	i := TileToOrdinal(tx, ty)
-	return m.tiles[i]
+	return &m.tiles[i]
+}
+
+func (m *Map) removeTile(tx, ty int) {
+	i := TileToOrdinal(tx, ty)
+	m.tiles[i].In = nil
+	m.tiles[i].Out = nil
+	m.tiles[i].Sprite = 0
 }
 
 func (m *Map) getAll() *[MapWidth * MapHeight]Tile {

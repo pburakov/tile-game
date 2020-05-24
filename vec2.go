@@ -11,7 +11,7 @@ func (v *Vec2) Add(u Vec2) {
 	v.Y += u.Y
 }
 
-func (v *Vec2) Unit(angle float64, c float64, u Vec2) Vec2 {
+func (v *Vec2) Unit(angle float64, c float64) Vec2 {
 	return Vec2{c * math.Cos(angle), c * math.Sin(angle)}
 }
 
