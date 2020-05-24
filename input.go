@@ -1,39 +1,44 @@
 package main
 
-type Selector struct {
-	Brushes []byte
-	Current int
+const WheelSelectorRange = 7.25 // Determines how fast/slow wheel-scrolling selector would be
+
+var brushes = []byte{
+	rail + ver,
+	rail + hor,
+	rail + cro,
+	rail + dl,
+	rail + dr,
+	rail + ul,
+	rail + ur,
+	rail + vl,
+	rail + vr,
+	rail + hu,
+	rail + hd,
 }
 
-var selector *Selector
+var maxRawValue = WheelSelectorRange * float64(len(brushes))
+
+type Selector struct {
+	Raw float64 // Raw offset from 0 y axis
+}
+
+var selector Selector
 
 func init() {
-	selector = &Selector{
-		Brushes: []byte{
-			rail + ver,
-			rail + hor,
-			rail + cro,
-			rail + dl,
-			rail + dr,
-			rail + ul,
-			rail + ur,
-			rail + vl,
-			rail + vr,
-			rail + hu,
-			rail + hd,
-		},
-		Current: 0,
+	selector = Selector{
+		Raw: 0.0,
 	}
 }
 
 func (s *Selector) GetCurrentSelection() byte {
-	return s.Brushes[s.Current]
+	return brushes[int(s.Raw/WheelSelectorRange)%len(brushes)]
 }
 
-func (s *Selector) Decrement() {
-	s.Current = (s.Current - 1) % len(s.Brushes)
-}
-
-func (s *Selector) Increment() {
-	s.Current = (s.Current + 1) % len(s.Brushes)
+func (s *Selector) ApplyDelta(d float64) {
+	s.Raw += d
+	if s.Raw < 0 {
+		s.Raw = maxRawValue
+	} else if s.Raw > maxRawValue {
+		s.Raw = 0
+	}
 }

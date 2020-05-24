@@ -12,14 +12,14 @@ const (
 	TilesPerRow  = ScreenWidth / TileSize
 )
 
-func DrawCursor(x int, y int, screen *ebiten.Image) error {
+func DrawCursor(x int, y int, sel *Selector, screen *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
 	// get top-left coordinates of the nearest tile
 	v := TileToPosition(PositionToTile(x, y))
 	op.GeoM.Translate(v.X, v.Y)
 
 	// Brush
-	err := screen.DrawImage(GetTileSprite(selector.GetCurrentSelection()).(*ebiten.Image), op)
+	err := screen.DrawImage(GetTileSprite(sel.GetCurrentSelection()).(*ebiten.Image), op)
 	if err != nil {
 		return err
 	}
