@@ -5,10 +5,8 @@ import (
 )
 
 func Update(screen *ebiten.Image) error {
-	// Handle input
-	x, y := ebiten.CursorPosition()
-	_, wy := ebiten.Wheel()
-	selector.ApplyDelta(wy)
+	// Handling changes in user input must go before drawing
+	HandleInput()
 
 	if ebiten.IsDrawingSkipped() {
 		return nil
@@ -25,7 +23,7 @@ func Update(screen *ebiten.Image) error {
 	}
 
 	// Draw cursor
-	err = DrawCursor(x, y, &selector, screen)
+	err = DrawCursor(&selector, screen)
 	if err != nil {
 		return err
 	}

@@ -22,6 +22,7 @@ func (m *Map) getTile(tx, ty int) Tile {
 	i := TileToOrdinal(tx, ty)
 	return m.tiles[i]
 }
+
 func (m *Map) getAll() *[MapWidth * MapHeight]Tile {
 	return &m.tiles
 }
