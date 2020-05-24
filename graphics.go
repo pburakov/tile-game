@@ -18,7 +18,14 @@ func DrawCursor(x int, y int, screen *ebiten.Image) error {
 	v := TileToPosition(PositionToTile(x, y))
 	op.GeoM.Translate(v.X, v.Y)
 
-	err := screen.DrawImage(GetTileSprite(cursor).(*ebiten.Image), op)
+	// Brush
+	err := screen.DrawImage(GetTileSprite(selector.GetCurrentSelection()).(*ebiten.Image), op)
+	if err != nil {
+		return err
+	}
+
+	// Cursor highlight frame
+	err = screen.DrawImage(GetTileSprite(cursor).(*ebiten.Image), op)
 	if err != nil {
 		return err
 	}
