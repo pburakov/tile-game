@@ -1,6 +1,6 @@
 package main
 
-const WheelSelectorRange = 7.25 // Determines how fast/slow wheel-scrolling selector would be
+const WheelSelectorRange = 1.00 // Determines how fast/slow wheel-scrolling selector would be
 
 var brushes = []byte{
 	rail + ver,
@@ -16,7 +16,7 @@ var brushes = []byte{
 	rail + hd,
 }
 
-var maxRawValue = WheelSelectorRange * float64(len(brushes))
+var maxRawValue = WheelSelectorRange * float64(len(brushes)-1)
 
 type Selector struct {
 	Raw float64 // Raw offset from 0 y axis
