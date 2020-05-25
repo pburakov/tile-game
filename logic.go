@@ -42,11 +42,7 @@ func cycle() {
 func moveTrain(t *Train) {
 	for _, c := range t.Cars {
 		if atTarget(c) {
-			// reset position to match target
-			// reset a potential rounding and float errors
-			c.Position.X = c.Target.Position.X
-			c.Position.Y = c.Target.Position.Y
-			findNextTarget(c)
+			findNextTarget(t, c)
 		}
 		angle := c.Position.Angle(c.Target.Position)
 		direction := AngleToDirection(angle)
@@ -63,15 +59,24 @@ func moveTrain(t *Train) {
 	}
 }
 
-func findNextTarget(c *Car) {
-	if c.Target.Fwd != nil {
-		c.Target = c.Target.Fwd
-	} else if c.Target.Rev != nil {
-		c.Target = c.Target.Rev
+func findNextTarget(t *Train, c *Car) {
+	switch t.Direction {
+	case forward:
+		if c.Target.Fwd != nil {
+			c.Target = c.Target.Fwd
+		} else {
+			t.Direction = reverse
+		}
+	case reverse:
+		if c.Target.Rev != nil {
+			c.Target = c.Target.Rev
+		} else {
+			t.Direction = forward
+		}
 	}
 }
 
 func atTarget(c *Car) bool {
-	return math.Abs(c.Position.X-c.Target.Position.X) < 1.0 &&
-		math.Abs(c.Position.Y-c.Target.Position.Y) < 1.0
+	return math.Abs(c.Position.X-c.Target.Position.X) <= 1.0 &&
+		math.Abs(c.Position.Y-c.Target.Position.Y) <= 1.0
 }

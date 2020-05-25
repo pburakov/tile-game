@@ -109,8 +109,15 @@ func (m *Map) removeTile(tx, ty int) {
 	i := TileToOrdinal(tx, ty)
 	m.tiles[i].Sprite = 0
 	if m.tiles[i].Node != nil {
-		m.tiles[i].Node.Fwd = nil
-		m.tiles[i].Node.Rev = nil
+		// Disconnect adjacent connected nodes, if any
+		if m.tiles[i].Node.Fwd != nil {
+			m.tiles[i].Node.Fwd.Rev = nil
+			m.tiles[i].Node.Fwd = nil
+		}
+		if m.tiles[i].Node.Rev != nil {
+			m.tiles[i].Node.Rev.Fwd = nil
+			m.tiles[i].Node.Rev = nil
+		}
 		m.tiles[i].Node = nil
 	}
 }
