@@ -15,7 +15,11 @@ func init() {
 	world.setTile(0, 2, rail+hor)
 	world.setTile(1, 2, rail+hor)
 	world.setTile(2, 2, rail+hor)
+	world.setTile(3, 2, rail+hor)
+	world.setTile(4, 2, rail+hor)
 
+	world.setTile(6, 10, rail+ver)
+	world.setTile(6, 11, rail+ver)
 	world.setTile(6, 12, rail+ver)
 	world.setTile(6, 13, rail+ver)
 	world.setTile(6, 14, rail+ver)
@@ -24,21 +28,27 @@ func init() {
 		{
 			Velocity: 1.0,
 			Cars: []*Car{
-				{
-					Position: world.getTile(0, 2).Node.Position,
-					Target:   world.getTile(0, 2).Node,
-				},
+				SpawnCar(Vec2{0, 38}, world.getTile(0, 2).Node),
+				SpawnCar(Vec2{-25, 38}, world.getTile(0, 2).Node),
+				SpawnCar(Vec2{-50, 38}, world.getTile(0, 2).Node),
 			},
 		},
 		{
 			Velocity: 1.0,
 			Cars: []*Car{
-				{
-					Position: world.getTile(6, 14).Node.Position,
-					Target:   world.getTile(6, 14).Node,
-				},
+				SpawnCar(Vec2{104, 240}, world.getTile(6, 14).Node),
+				SpawnCar(Vec2{104, 260}, world.getTile(6, 14).Node),
+				SpawnCar(Vec2{104, 280}, world.getTile(6, 14).Node),
 			},
 		},
+	}
+}
+
+func SpawnCar(position Vec2, target *PathNode) *Car {
+	return &Car{
+		Position: position,
+		Target:   target,
+		Source:   &PathNode{Position: position},
 	}
 }
 

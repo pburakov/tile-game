@@ -18,14 +18,16 @@ type Train struct {
 }
 
 type Car struct {
-	Position Vec2      // Position of train's geometric center
-	Target   *PathNode // A destination point the train is currently moving into
+	Position Vec2      // Position of car's geometric center
+	Target   *PathNode // A destination point the car is currently moving into
+	Source   *PathNode // A source point the car is currently moving from
 }
 
 type PathNode struct {
 	Position Vec2
 	Fwd      *PathNode // Next node in forward direction
 	Rev      *PathNode // Prev node in forward direction
+	Tile     *Tile     // Parent tile the path node sits on
 }
 
 type Tile struct {

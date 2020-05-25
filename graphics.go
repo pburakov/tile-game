@@ -50,16 +50,19 @@ func DrawTrains(trains *[]*Train, screen *ebiten.Image) error {
 	for _, t := range *trains {
 		for i, c := range t.Cars {
 			angle := c.Position.Angle(c.Target.Position)
-			dir := AngleToDirection(angle)
+			dir := AngleToDirection(angle, t.Direction)
+
 			var img *ebiten.Image
 			if i == 0 {
 				img = GetHeadSprite(dir).(*ebiten.Image)
 			} else {
 				img = GetCarSprite(dir).(*ebiten.Image)
 			}
+
 			v := CarTopLeft(c, img)
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(v.X, v.Y)
+
 			err := screen.DrawImage(img, op)
 			if err != nil {
 				return err

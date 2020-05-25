@@ -25,24 +25,47 @@ func TileToOrdinal(tx, ty int) int {
 	return TilesPerRow*ty + tx
 }
 
-func AngleToDirection(rad float64) string {
+// AngleToDirection returns sprite direction token, adjusted for train direction
+func AngleToDirection(rad float64, d Direction) string {
 	a := RadToDegrees(rad)
-	if 30 < a && a <= 60 {
-		return upRight
-	} else if 60 < a && a <= 120 {
-		return up
-	} else if 120 < a && a <= 150 {
-		return upLeft
-	} else if 150 < a && a <= 210 {
+	switch d {
+	case forward:
+		if 30 < a && a <= 60 {
+			return upRight
+		} else if 60 < a && a <= 120 {
+			return up
+		} else if 120 < a && a <= 150 {
+			return upLeft
+		} else if 150 < a && a <= 210 {
+			return left
+		} else if 210 < a && a <= 240 {
+			return downLeft
+		} else if 240 < a && a <= 300 {
+			return down
+		} else if 300 < a && a <= 330 {
+			return downRight
+		}
+		return right
+	case reverse:
+		if 30 < a && a <= 60 {
+			return upRight
+		} else if 60 < a && a <= 120 {
+			return down
+		} else if 120 < a && a <= 150 {
+			return upLeft
+		} else if 150 < a && a <= 210 {
+			return right
+		} else if 210 < a && a <= 240 {
+			return downLeft
+		} else if 240 < a && a <= 300 {
+			return up
+		} else if 300 < a && a <= 330 {
+			return downRight
+		}
 		return left
-	} else if 210 < a && a <= 240 {
-		return downLeft
-	} else if 240 < a && a <= 300 {
-		return down
-	} else if 300 < a && a <= 330 {
-		return downRight
+	default:
+		return right
 	}
-	return right
 }
 
 func RadToDegrees(r float64) int {
