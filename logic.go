@@ -44,11 +44,11 @@ func moveTrain(t *Train) {
 		if atTarget(c) {
 			// reset position to match target
 			// reset a potential rounding and float errors
-			c.Position.X = c.Target.X
-			c.Position.Y = c.Target.Y
+			c.Position.X = c.Target.Position.X
+			c.Position.Y = c.Target.Position.Y
 			findNextTarget(c)
 		}
-		angle := c.Position.Angle(c.Target)
+		angle := c.Position.Angle(c.Target.Position)
 		direction := AngleToDirection(angle)
 
 		// Calculate car velocity, must be slower at turns
@@ -64,17 +64,14 @@ func moveTrain(t *Train) {
 }
 
 func findNextTarget(c *Car) {
-	// emulate target switching for now
-	if c.Target.X == 48 {
-		c.Target.X = 48 + 16*2
-		c.Target.Y = 198 - 16*2
-	} else if c.Target.X == 48+16*2 {
-		c.Target.X = 48 + 16*5
-		c.Target.Y = 198 - 16*2
+	if c.Target.Fwd != nil {
+		c.Target = c.Target.Fwd
+	} else if c.Target.Rev != nil {
+		c.Target = c.Target.Rev
 	}
 }
 
 func atTarget(c *Car) bool {
-	return math.Abs(c.Position.X-c.Target.X) < 1.0 &&
-		math.Abs(c.Position.Y-c.Target.Y) < 1.0
+	return math.Abs(c.Position.X-c.Target.Position.X) < 1.0 &&
+		math.Abs(c.Position.Y-c.Target.Position.Y) < 1.0
 }

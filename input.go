@@ -7,8 +7,8 @@ import "github.com/hajimehoshi/ebiten"
 const WheelSelectorRange = 5.00
 
 var brushes = []byte{
-	rail + ver,
 	rail + hor,
+	rail + ver,
 	rail + dl,
 	rail + dr,
 	rail + ul,
@@ -42,7 +42,7 @@ func HandleInput() {
 
 	if lftBtn {
 		tx, ty := PositionToTile(selector.CurX, selector.CurY)
-		world.setTile(tx, ty, Tile{Sprite: selector.GetCurrentSelection()})
+		world.setTile(tx, ty, selector.GetCurrentSelection())
 	} else if rgtBtn {
 		world.removeTile(PositionToTile(selector.CurX, selector.CurY))
 	}

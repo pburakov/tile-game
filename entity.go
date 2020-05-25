@@ -6,19 +6,17 @@ type Train struct {
 }
 
 type Car struct {
-	Position Vec2 // Position of train's geometric center
-	Target   Vec2 // A destination point the train is currently moving into
+	Position Vec2      // Position of train's geometric center
+	Target   *PathNode // A destination point the train is currently moving into
 }
 
 type PathNode struct {
 	Position Vec2
-	Prev     *PathNode
-	Next     *PathNode
+	Fwd      *PathNode // Next node, going west to east, south to north
+	Rev      *PathNode // Prev node, going east to west, north to south
 }
 
 type Tile struct {
-	// Entry and exit points for the train
-	In     *PathNode
-	Out    *PathNode
+	Node   *PathNode
 	Sprite byte
 }

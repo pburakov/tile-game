@@ -49,7 +49,7 @@ func DrawTiles(m *Map, screen *ebiten.Image) error {
 func DrawTrains(trains *[]*Train, screen *ebiten.Image) error {
 	for _, t := range *trains {
 		for i, c := range t.Cars {
-			angle := c.Position.Angle(c.Target)
+			angle := c.Position.Angle(c.Target.Position)
 			dir := AngleToDirection(angle)
 			var img *ebiten.Image
 			if i == 0 {
