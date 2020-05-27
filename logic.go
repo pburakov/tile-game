@@ -42,13 +42,22 @@ func cycle() {
 }
 
 func moveTrain(t *Train) {
-	if atDeadEnd(t) {
-		reverseTrain(t)
+	h := getTrainHeadCar(t)
+	// Check if train's head car can proceed, otherwise it's a dead end
+	if atTarget(h) {
+		newTarget := findNextTarget(h)
+		if newTarget == nil {
+			reverseTrain(t)
+		}
 	}
 
+	// Calculate route for each car, including head
 	for _, c := range t.Cars {
 		if atTarget(c) {
-			findNextTarget(t.Direction, c)
+			newTarget := findNextTarget(c)
+			if newTarget != nil {
+				c.Source, c.Target = c.Target, newTarget
+			} // TODO: else a car probably derailed
 		}
 
 		angle := c.Position.Angle(c.Target.Position)
@@ -72,46 +81,37 @@ func AdjustedVelocity(rad float64, baseVelocity float64) float64 {
 	}
 }
 
-// findNextTarget updates the car to follow the next target node
-func findNextTarget(d Direction, c *Car) {
-	switch d {
-	case forward:
-		if c.Target.Fwd != nil {
-			c.Source = c.Target
-			c.Target = c.Target.Fwd
-		}
-	case reverse:
-		if c.Target.Rev != nil {
-			c.Source = c.Target
-			c.Target = c.Target.Rev
-		} else {
-			c.Target = c.Source
+// findNextTarget finds the next target node for car to follow
+func findNextTarget(c *Car) *PathNode {
+	// For now, pick the next node that is not the source
+	for k, v := range c.Target.Adj {
+		if k != c.Source.Id {
+			return v
 		}
 	}
+	return nil
 }
 
 func reverseTrain(t *Train) {
-	if t.Direction == forward {
-		t.Direction = reverse
-	} else {
-		t.Direction = forward
-	}
 	for _, c := range t.Cars {
 		c.Target, c.Source = c.Source, c.Target
 	}
-}
-
-func atDeadEnd(t *Train) bool {
-	if t.Direction == forward {
-		c := t.Cars[0]
-		return atTarget(c) && c.Target.Fwd == nil
+	if t.Heading == push {
+		t.Heading = pull
 	} else {
-		c := t.Cars[len(t.Cars)-1]
-		return atTarget(c) && c.Target.Rev == nil
+		t.Heading = push
 	}
 }
 
 func atTarget(c *Car) bool {
 	return math.Abs(c.Position.X-c.Target.Position.X) <= 1.0 &&
 		math.Abs(c.Position.Y-c.Target.Position.Y) <= 1.0
+}
+
+func getTrainHeadCar(t *Train) *Car {
+	if t.Heading == pull {
+		return t.Cars[0]
+	} else {
+		return t.Cars[len(t.Cars)-1]
+	}
 }

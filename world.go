@@ -17,6 +17,9 @@ func init() {
 	world.setTile(2, 2, rail+hor)
 	world.setTile(3, 2, rail+hor)
 	world.setTile(4, 2, rail+hor)
+	world.setTile(5, 2, rail+dl)
+	world.setTile(5, 3, rail+ver)
+	world.setTile(5, 4, rail+ver)
 
 	world.setTile(6, 10, rail+ver)
 	world.setTile(6, 11, rail+ver)
@@ -44,11 +47,12 @@ func init() {
 	}
 }
 
-func SpawnCar(position Vec2, target *PathNode) *Car {
+func SpawnCar(p Vec2, target *PathNode) *Car {
 	return &Car{
-		Position: position,
+		Position: p,
 		Target:   target,
-		Source:   &PathNode{Position: position},
+		// For new cars that start off the screen, the source node is imaginary
+		Source: NewPathNode(p),
 	}
 }
 
@@ -56,53 +60,45 @@ var trains []*Train
 
 func (m *Map) setTile(tx, ty int, b byte) {
 	i := TileToOrdinal(tx, ty)
-	if i < 0 || i >= len(m.tiles)-1 {
+	// Check if not out of bounds or there is a path already on this tile
+	if i < 0 || i > len(m.tiles)-1 || world.getTile(tx, ty).Sprite != none {
 		return
 	}
 
 	// Coordinates of top-left corner
 	v := TileToPosition(tx, ty)
 
-	adjL, adjR, adjU, adjD :=
+	// adjacent nodes
+	l, r, u, d :=
 		world.getTile(tx-1, ty),
 		world.getTile(tx+1, ty),
 		world.getTile(tx, ty-1),
 		world.getTile(tx, ty+1)
 
-	n := &PathNode{Position: Vec2{v.X + 8, v.Y + 6}}
+	t := &m.tiles[i]
+	t.Sprite = b
+	t.Node = NewPathNode(Vec2{v.X + 8, v.Y + 6})
 
 	switch b {
 	case rail + hor:
-		if adjL != nil {
-			n.Rev = adjL.Node
-			if adjL.Node != nil {
-				adjL.Node.Fwd = n
-			}
-		}
-		if adjR != nil {
-			n.Fwd = adjR.Node
-			if adjR.Node != nil {
-				adjR.Node.Rev = n
-			}
-		}
+		Connect(l, t, r)
 	case rail + ver:
-		if adjU != nil {
-			n.Fwd = adjU.Node
-			if adjU.Node != nil {
-				adjU.Node.Rev = n
-			}
-		}
-		if adjD != nil {
-			n.Rev = adjD.Node
-			if adjD.Node != nil {
-				adjD.Node.Fwd = n
-			}
-		}
+		Connect(u, t, d)
+	case rail + dl:
+		Connect(l, t, d)
 	}
+}
 
-	if i >= 0 && i < len(m.tiles) {
-		m.tiles[i].Sprite = b
-		m.tiles[i].Node = n
+// Connect connects nodes on tiles a, n and b assuming n is in the new tile between a and b
+func Connect(a, n, b *Tile) {
+	x := n.Node
+	if a != nil && a.Node != nil {
+		a.Node.Adj[x.Id] = x
+		x.Adj[a.Node.Id] = a.Node
+	}
+	if b != nil && b.Node != nil {
+		b.Node.Adj[x.Id] = x
+		x.Adj[b.Node.Id] = b.Node
 	}
 }
 
@@ -118,15 +114,11 @@ func (m *Map) getTile(tx, ty int) *Tile {
 func (m *Map) removeTile(tx, ty int) {
 	i := TileToOrdinal(tx, ty)
 	m.tiles[i].Sprite = 0
-	if m.tiles[i].Node != nil {
+	u := m.tiles[i].Node
+	if u != nil {
 		// Disconnect adjacent connected nodes, if any
-		if m.tiles[i].Node.Fwd != nil {
-			m.tiles[i].Node.Fwd.Rev = nil
-			m.tiles[i].Node.Fwd = nil
-		}
-		if m.tiles[i].Node.Rev != nil {
-			m.tiles[i].Node.Rev.Fwd = nil
-			m.tiles[i].Node.Rev = nil
+		for _, v := range u.Adj {
+			delete(v.Adj, u.Id)
 		}
 		m.tiles[i].Node = nil
 	}

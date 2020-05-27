@@ -15,7 +15,7 @@ func PositionToTile(x, y int) (tx int, ty int) {
 	return (x - x%TileSize) / TileSize, (y - y%TileSize) / TileSize
 }
 
-// OrdinalToPosition returns position of top-left corner of a tile with and ordinal number i
+// OrdinalToPosition returns position of top-left corner of a tile with an ordinal number i
 func OrdinalToPosition(i int) Vec2 {
 	return Vec2{float64(i%TilesPerRow) * TileSize, float64(i/TilesPerRow) * TileSize}
 }
@@ -25,11 +25,11 @@ func TileToOrdinal(tx, ty int) int {
 	return TilesPerRow*ty + tx
 }
 
-// AngleToDirection returns sprite direction token, adjusted for train direction
-func AngleToDirection(rad float64, d Direction) string {
+// AngleToDirection returns sprite direction token, adjusted for train's heading
+func AngleToDirection(rad float64, h Heading) string {
 	a := RadToDegrees(rad)
-	switch d {
-	case forward:
+	switch h {
+	case pull:
 		if 30 < a && a <= 60 {
 			return upRight
 		} else if 60 < a && a <= 120 {
@@ -46,7 +46,7 @@ func AngleToDirection(rad float64, d Direction) string {
 			return downRight
 		}
 		return right
-	case reverse:
+	case push:
 		if 30 < a && a <= 60 {
 			return upRight
 		} else if 60 < a && a <= 120 {

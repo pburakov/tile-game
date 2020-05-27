@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/ebitenutil"
+	"image/color"
 	_ "image/png"
 )
 
@@ -11,6 +13,8 @@ const (
 	ScreenHeight = 240 // 20 x 15 tiles
 	TilesPerRow  = ScreenWidth / TileSize
 )
+
+var DebugColor = color.RGBA{0xff, 0xff, 0x00, 0xff}
 
 func DrawCursor(sel *Selector, screen *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
@@ -46,11 +50,30 @@ func DrawTiles(m *Map, screen *ebiten.Image) error {
 	return nil
 }
 
+func DrawPaths(m *Map, screen *ebiten.Image) {
+	for _, t := range m.getAll() {
+		u := t.Node
+		if u != nil {
+			ebitenutil.DrawRect(
+				screen,
+				u.Position.X, u.Position.Y, 3, 3,
+				DebugColor)
+			for _, v := range u.Adj {
+				ebitenutil.DrawLine(
+					screen,
+					u.Position.X, u.Position.Y,
+					v.Position.X, v.Position.Y,
+					DebugColor)
+			}
+		}
+	}
+}
+
 func DrawTrains(trains *[]*Train, screen *ebiten.Image) error {
 	for _, t := range *trains {
 		for i, c := range t.Cars {
 			angle := c.Position.Angle(c.Target.Position)
-			dir := AngleToDirection(angle, t.Direction)
+			dir := AngleToDirection(angle, t.Heading)
 
 			var img *ebiten.Image
 			if i == 0 {

@@ -22,6 +22,8 @@ func Update(screen *ebiten.Image) error {
 		return err
 	}
 
+	DrawPaths(&world, screen) // Used for debugging
+
 	// Draw cursor
 	err = DrawCursor(&selector, screen)
 	if err != nil {
