@@ -1,4 +1,4 @@
-module github.com/pburakov/tile-game
+module tile-game
 
 go 1.14
 
