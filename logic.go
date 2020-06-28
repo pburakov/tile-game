@@ -10,7 +10,7 @@ var (
 	Done = make(chan bool) // exit signal
 )
 
-const slowVelocityMultiplier = 0.66
+const slowVelocityMultiplier = 0.77
 
 func init() {
 	log.SetFlags(0)
@@ -63,7 +63,7 @@ func moveTrain(t *Train) {
 		angle := c.Position.Angle(c.Target.Position)
 		v := AdjustedVelocity(angle, t.Velocity)
 
-		u := c.Position.Unit(angle, v)
+		u := UnitDistance(angle, v)
 		c.Position.Add(u)
 	}
 }
@@ -71,10 +71,10 @@ func moveTrain(t *Train) {
 // AdjustedVelocity calculates adjusted car velocity, which must be slower at turns
 func AdjustedVelocity(rad float64, baseVelocity float64) float64 {
 	a := RadToDegrees(rad)
-	if (30 < a && a <= 60) || // up-left
-		(120 < a && a <= 150) || // up-right
-		(210 < a && a <= 240) || // down-right
-		(300 < a && a <= 330) { // down-left
+	if (22 < a && a <= 67) ||
+		(112 < a && a <= 157) ||
+		(202 < a && a <= 247) ||
+		(292 < a && a <= 337) {
 		return slowVelocityMultiplier * baseVelocity
 	} else {
 		return baseVelocity
@@ -104,8 +104,14 @@ func reverseTrain(t *Train) {
 }
 
 func atTarget(c *Car) bool {
-	return math.Abs(c.Position.X-c.Target.Position.X) <= 1.0 &&
-		math.Abs(c.Position.Y-c.Target.Position.Y) <= 1.0
+	// TODO: Simulates smooth turning, change to follow proper radius
+	if c.Target.IsTurn {
+		return math.Abs(c.Position.X-c.Target.Position.X) <= 7.1 &&
+			math.Abs(c.Position.Y-c.Target.Position.Y) <= 7.1
+	} else {
+		return math.Abs(c.Position.X-c.Target.Position.X) <= 1.0 &&
+			math.Abs(c.Position.Y-c.Target.Position.Y) <= 1.0
+	}
 }
 
 func getTrainHeadCar(t *Train) *Car {

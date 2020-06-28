@@ -29,13 +29,15 @@ type PathNode struct {
 	Id       NodeId // Node's unique identifier
 	Position Vec2
 	Adj      map[NodeId]*PathNode // Links to adjacent nodes in any direction
+	IsTurn   bool                 // Denotes whether node is a 90-degree turn in any direction
 }
 
-func NewPathNode(p Vec2) *PathNode {
+func NewPathNode(p Vec2, isTurn bool) *PathNode {
 	return &PathNode{
 		Id:       newUid(),
 		Position: p,
 		Adj:      make(map[NodeId]*PathNode),
+		IsTurn:   isTurn,
 	}
 }
 

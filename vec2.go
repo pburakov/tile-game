@@ -11,10 +11,12 @@ func (v *Vec2) Add(u Vec2) {
 	v.Y += u.Y
 }
 
-func (v *Vec2) Unit(angle float64, c float64) Vec2 {
-	return Vec2{c * math.Cos(angle), c * math.Sin(angle)}
+// UnitDistance returns a unit-speed vector with a given angle and velocity
+func UnitDistance(angle float64, v float64) Vec2 {
+	return Vec2{v * math.Cos(angle), v * math.Sin(angle)}
 }
 
+// Angle returns angle between vectors u and v
 func (v *Vec2) Angle(u Vec2) float64 {
 	dx := u.X - v.X
 	dy := u.Y - v.Y

@@ -87,8 +87,8 @@ func init() {
 	carSprites[down] = loadCustomSprite(18, 132, 8, 19, img)
 	carSprites[upRight] = loadCustomSprite(0, 96, 16, 17, img)
 	carSprites[upLeft] = loadCustomSprite(0, 114, 16, 17, img)
-	carSprites[downRight] = loadCustomSprite(0, 96, 16, 17, img)
-	carSprites[downLeft] = loadCustomSprite(0, 114, 16, 17, img)
+	carSprites[downRight] = loadCustomSprite(0, 114, 16, 17, img)
+	carSprites[downLeft] = loadCustomSprite(0, 96, 16, 17, img)
 
 	log.Print("loaded image assets")
 }

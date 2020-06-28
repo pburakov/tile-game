@@ -59,7 +59,7 @@ func SpawnCar(p Vec2, target *PathNode) *Car {
 		Position: p,
 		Target:   target,
 		// For new cars that start off the screen, the source node is imaginary
-		Source: NewPathNode(p),
+		Source: NewPathNode(p, false),
 	}
 }
 
@@ -84,7 +84,9 @@ func (m *Map) setTile(tx, ty int, b byte) {
 
 	t := &m.tiles[i]
 	t.Sprite = b
-	t.Node = NewPathNode(Vec2{v.X + 8, v.Y + 6})
+	t.Node = NewPathNode(
+		Vec2{v.X + 8, v.Y + 6}, b != rail+hor && b != rail+ver,
+	)
 
 	switch b {
 	case rail + hor:

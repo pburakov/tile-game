@@ -28,38 +28,39 @@ func TileToOrdinal(tx, ty int) int {
 // AngleToDirection returns sprite direction token, adjusted for train's heading
 func AngleToDirection(rad float64, h Heading) string {
 	a := RadToDegrees(rad)
+	// Circle is split into 8x45-degree segments
 	switch h {
 	case pull:
-		if 30 < a && a <= 60 {
+		if 22 < a && a <= 67 {
 			return upRight
-		} else if 60 < a && a <= 120 {
+		} else if 67 < a && a <= 112 {
 			return up
-		} else if 120 < a && a <= 150 {
+		} else if 112 < a && a <= 157 {
 			return upLeft
-		} else if 150 < a && a <= 210 {
+		} else if 157 < a && a <= 202 {
 			return left
-		} else if 210 < a && a <= 240 {
+		} else if 202 < a && a <= 247 {
 			return downLeft
-		} else if 240 < a && a <= 300 {
+		} else if 247 < a && a <= 292 {
 			return down
-		} else if 300 < a && a <= 330 {
+		} else if 292 < a && a <= 337 {
 			return downRight
 		}
 		return right
 	case push:
-		if 30 < a && a <= 60 {
+		if 22 < a && a <= 67 {
 			return downLeft
-		} else if 60 < a && a <= 120 {
+		} else if 67 < a && a <= 112 {
 			return down
-		} else if 120 < a && a <= 150 {
+		} else if 112 < a && a <= 157 {
 			return downRight
-		} else if 150 < a && a <= 210 {
+		} else if 157 < a && a <= 202 {
 			return right
-		} else if 210 < a && a <= 240 {
+		} else if 202 < a && a <= 247 {
 			return upRight
-		} else if 240 < a && a <= 300 {
+		} else if 247 < a && a <= 292 {
 			return up
-		} else if 300 < a && a <= 330 {
+		} else if 292 < a && a <= 337 {
 			return upLeft
 		}
 		return left
