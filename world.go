@@ -17,12 +17,22 @@ func init() {
 	world.setTile(2, 2, rail+hor)
 	world.setTile(3, 2, rail+hor)
 	world.setTile(4, 2, rail+hor)
+	world.setTile(5, 2, rail+dl)
+	world.setTile(5, 3, rail+ver)
+	world.setTile(5, 4, rail+ver)
+	world.setTile(5, 5, rail+ver)
+	world.setTile(5, 6, rail+ver)
 
-	world.setTile(6, 10, rail+ver)
-	world.setTile(6, 11, rail+ver)
-	world.setTile(6, 12, rail+ver)
-	world.setTile(6, 13, rail+ver)
 	world.setTile(6, 14, rail+ver)
+	world.setTile(6, 13, rail+ver)
+	world.setTile(6, 12, rail+ver)
+	world.setTile(6, 11, rail+ver)
+	world.setTile(6, 10, rail+ver)
+	world.setTile(6, 9, rail+dr)
+	world.setTile(7, 9, rail+hor)
+	world.setTile(8, 9, rail+hor)
+	world.setTile(9, 9, rail+hor)
+	world.setTile(10, 9, rail+hor)
 
 	trains = []*Train{
 		{

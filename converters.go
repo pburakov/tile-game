@@ -48,19 +48,19 @@ func AngleToDirection(rad float64, h Heading) string {
 		return right
 	case push:
 		if 30 < a && a <= 60 {
-			return upRight
+			return downLeft
 		} else if 60 < a && a <= 120 {
 			return down
 		} else if 120 < a && a <= 150 {
-			return upLeft
+			return downRight
 		} else if 150 < a && a <= 210 {
 			return right
 		} else if 210 < a && a <= 240 {
-			return downLeft
+			return upRight
 		} else if 240 < a && a <= 300 {
 			return up
 		} else if 300 < a && a <= 330 {
-			return downRight
+			return upLeft
 		}
 		return left
 	default:
@@ -69,9 +69,6 @@ func AngleToDirection(rad float64, h Heading) string {
 }
 
 func RadToDegrees(r float64) int {
-	if r < 0 {
-		return int(math.Abs(math.Round(180*r/math.Pi))) % 360
-	}
 	return int(math.Round(180*(2*math.Pi-r)/math.Pi)) % 360
 }
 
