@@ -1,10 +1,13 @@
 package main
 
-import "github.com/hajimehoshi/ebiten"
+import (
+	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/inpututil"
+)
 
 // WheelSelectorRange determines how fast/slow wheel-scrolling selector will be.
 // For macOS touchpads and mouse values 3.00 .. 5.00 work best for smooth scrolling
-const WheelSelectorRange = 5.00
+const WheelSelectorRange = 1.00
 
 var brushes = []byte{
 	rail + hor,
@@ -21,6 +24,7 @@ var maxRawWheelValue = WheelSelectorRange * float64(len(brushes))
 type Selector struct {
 	CurX, CurY int     // Cursor position
 	RawWheel   float64 // Raw offset from 0 y axis
+	Current    int     // Currently selected index
 }
 
 var selector Selector
@@ -35,7 +39,11 @@ func init() {
 func HandleInput() {
 	selector.CurX, selector.CurY = ebiten.CursorPosition()
 	_, wy := ebiten.Wheel()
-	selector.ApplyDelta(wy)
+	selector.ApplyWheelDelta(wy)
+
+	selNxt := inpututil.IsKeyJustPressed(ebiten.KeyQ)
+	selPrv := inpututil.IsKeyJustPressed(ebiten.KeyE)
+	selector.ApplyKeyDelta(selNxt, selPrv)
 
 	lftBtn := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
 	rgtBtn := ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight)
@@ -49,14 +57,31 @@ func HandleInput() {
 }
 
 func (s *Selector) GetCurrentSelection() byte {
-	return brushes[int(s.RawWheel/WheelSelectorRange)%len(brushes)]
+	return brushes[s.Current]
 }
 
-func (s *Selector) ApplyDelta(d float64) {
+func (s *Selector) ApplyKeyDelta(nxt, prv bool) {
+	if nxt {
+		s.Current++
+	} else if prv {
+		s.Current--
+	}
+	if s.Current >= len(brushes) {
+		s.Current = 0
+	} else if s.Current < 0 {
+		s.Current = len(brushes) - 1
+	}
+}
+
+func (s *Selector) ApplyWheelDelta(d float64) {
+	if d == 0.0 {
+		return
+	}
 	s.RawWheel += d
 	if s.RawWheel < 0 {
 		s.RawWheel = maxRawWheelValue
 	} else if s.RawWheel > maxRawWheelValue {
 		s.RawWheel = 0
 	}
+	s.Current = int(s.RawWheel/WheelSelectorRange) % len(brushes)
 }

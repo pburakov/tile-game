@@ -17,9 +17,6 @@ func init() {
 	world.setTile(2, 2, rail+hor)
 	world.setTile(3, 2, rail+hor)
 	world.setTile(4, 2, rail+hor)
-	world.setTile(5, 2, rail+dl)
-	world.setTile(5, 3, rail+ver)
-	world.setTile(5, 4, rail+ver)
 
 	world.setTile(6, 10, rail+ver)
 	world.setTile(6, 11, rail+ver)
@@ -86,6 +83,12 @@ func (m *Map) setTile(tx, ty int, b byte) {
 		Connect(u, t, d)
 	case rail + dl:
 		Connect(l, t, d)
+	case rail + dr:
+		Connect(r, t, d)
+	case rail + ul:
+		Connect(l, t, u)
+	case rail + ur:
+		Connect(r, t, u)
 	}
 }
 
