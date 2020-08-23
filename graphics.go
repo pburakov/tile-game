@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"image/color"
@@ -70,13 +71,17 @@ func DrawPaths(m *Map, screen *ebiten.Image) {
 }
 
 func DrawTrains(trains *[]*Train, screen *ebiten.Image) error {
-	for _, t := range *trains {
-		for i, c := range t.Cars {
+	fmt.Print("\033[0;0H")
+	for tId, t := range *trains {
+		fmt.Printf("Train %d:\n", tId)
+		for cId, c := range t.Cars {
+			fmt.Printf("Car %d: %s\n", cId, c.DebugInfo())
+
 			angle := c.Position.Angle(c.Target.Position)
 			dir := AngleToDirection(angle, t.Heading)
 
 			var img *ebiten.Image
-			if i == 0 {
+			if cId == 0 {
 				img = GetHeadSprite(dir).(*ebiten.Image)
 			} else {
 				img = GetCarSprite(dir).(*ebiten.Image)

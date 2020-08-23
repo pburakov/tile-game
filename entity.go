@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Heading bool
 
 const (
@@ -13,14 +15,19 @@ type Train struct {
 
 	// Heading denotes whether head car is pushing or pulling
 	// Although a train can have two locomotives the head is always
-	// relative to its starting direction.
+	// relative to its starting direction
 	Heading Heading
 }
 
 type Car struct {
 	Position Vec2      // Position of car's geometric center
+	Angle    float64   // Angle is the last known angle the car is traveling at
 	Target   *PathNode // A target point the car is currently moving into
 	Source   *PathNode // A source point the car is currently moving from
+}
+
+func (c *Car) DebugInfo() string {
+	return fmt.Sprintf("angle: %d; path: %d -> %d", RadToDegrees(c.Angle), c.Source.Id, c.Target.Id)
 }
 
 type NodeId int
