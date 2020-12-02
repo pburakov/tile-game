@@ -44,7 +44,7 @@ func cycle() {
 func moveTrain(t *Train) {
 	h := getTrainHeadCar(t)
 	// Check if train's head car can proceed, otherwise it's a dead end
-	if atTarget(h) {
+	if atTarget(h, t.Velocity) {
 		newTarget := findNextTarget(h)
 		if newTarget == nil {
 			reverseTrain(t)
@@ -53,31 +53,16 @@ func moveTrain(t *Train) {
 
 	// Calculate route for each car, including head
 	for _, c := range t.Cars {
-		if atTarget(c) {
+		if atTarget(c, t.Velocity) {
 			newTarget := findNextTarget(c)
 			if newTarget != nil {
 				c.Source, c.Target = c.Target, newTarget
 			} // TODO: else a car probably derailed
 		}
 
-		angle := c.Position.Angle(c.Target.Position)
-		v := AdjustedVelocity(angle, t.Velocity)
-
-		u := UnitDistance(angle, v)
+		c.Angle = c.Position.Angle(c.Target.Position)
+		u := UnitDistance(c.Angle, t.Velocity)
 		c.Position.Add(u)
-	}
-}
-
-// AdjustedVelocity calculates adjusted car velocity, which must be slower at turns
-func AdjustedVelocity(rad float64, baseVelocity float64) float64 {
-	a := RadToDegrees(rad)
-	if (22 < a && a <= 67) ||
-		(112 < a && a <= 157) ||
-		(202 < a && a <= 247) ||
-		(292 < a && a <= 337) {
-		return slowVelocityMultiplier * baseVelocity
-	} else {
-		return baseVelocity
 	}
 }
 
@@ -103,15 +88,9 @@ func reverseTrain(t *Train) {
 	}
 }
 
-func atTarget(c *Car) bool {
-	// TODO: Simulates smooth turning, change to follow proper radius
-	if c.Target.IsTurn {
-		return math.Abs(c.Position.X-c.Target.Position.X) <= 7.1 &&
-			math.Abs(c.Position.Y-c.Target.Position.Y) <= 7.1
-	} else {
-		return math.Abs(c.Position.X-c.Target.Position.X) <= 1.0 &&
-			math.Abs(c.Position.Y-c.Target.Position.Y) <= 1.0
-	}
+func atTarget(c *Car, threshold float64) bool {
+	return math.Abs(c.Position.X-c.Target.Position.X) <= threshold &&
+		math.Abs(c.Position.Y-c.Target.Position.Y) <= threshold
 }
 
 func getTrainHeadCar(t *Train) *Car {

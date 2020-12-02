@@ -22,8 +22,8 @@ type Train struct {
 type Car struct {
 	Position Vec2      // Position of car's geometric center
 	Angle    float64   // Angle is the last known angle the car is traveling at
-	Target   *PathNode // A target point the car is currently moving into
-	Source   *PathNode // A source point the car is currently moving from
+	Target   *PathNode // Target is the point the car is currently moving towards
+	Source   *PathNode // Source is the point the car is currently moving from
 }
 
 func (c *Car) DebugInfo() string {
