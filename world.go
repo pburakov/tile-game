@@ -66,6 +66,9 @@ func SpawnCar(p Vec2, target *PathNode) *Car {
 var trains []*Train
 
 func (m *Map) setTile(tx, ty int, b byte) {
+	if tx < 0 || tx >= MapWidth || ty < 0 || ty >= MapHeight {
+		return
+	}
 	i := TileToOrdinal(tx, ty)
 	// Check if not out of bounds or there is a path already on this tile
 	if i < 0 || i > len(m.tiles)-1 || world.getTile(tx, ty).Sprite != none {
@@ -118,6 +121,9 @@ func Connect(a, n, b *Tile) {
 }
 
 func (m *Map) getTile(tx, ty int) *Tile {
+	if tx < 0 || tx >= MapWidth || ty < 0 || ty >= MapHeight {
+		return nil
+	}
 	i := TileToOrdinal(tx, ty)
 	if i >= 0 && i < len(m.tiles) {
 		return &m.tiles[i]
