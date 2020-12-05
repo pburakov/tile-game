@@ -60,6 +60,7 @@ func init() {
 	tileSprites[none] = loadTileSprite(none, img)
 	tileSprites[grass] = loadTileSprite(grass, img)
 	tileSprites[cursor] = loadTileSprite(cursor, img)
+
 	tileSprites[rail+ver] = loadTileSprite(rail+ver, img)
 	tileSprites[rail+hor] = loadTileSprite(rail+hor, img)
 	tileSprites[rail+cro] = loadTileSprite(rail+cro, img)
@@ -71,6 +72,18 @@ func init() {
 	tileSprites[rail+vr] = loadTileSprite(rail+vr, img)
 	tileSprites[rail+hu] = loadTileSprite(rail+hu, img)
 	tileSprites[rail+hd] = loadTileSprite(rail+hd, img)
+
+	tileSprites[road+ver] = loadTileSprite(road+ver, img)
+	tileSprites[road+hor] = loadTileSprite(road+hor, img)
+	tileSprites[road+cro] = loadTileSprite(road+cro, img)
+	tileSprites[road+dl] = loadTileSprite(road+dl, img)
+	tileSprites[road+dr] = loadTileSprite(road+dr, img)
+	tileSprites[road+ul] = loadTileSprite(road+ul, img)
+	tileSprites[road+ur] = loadTileSprite(road+ur, img)
+	tileSprites[road+vl] = loadTileSprite(road+vl, img)
+	tileSprites[road+vr] = loadTileSprite(road+vr, img)
+	tileSprites[road+hu] = loadTileSprite(road+hu, img)
+	tileSprites[road+hd] = loadTileSprite(road+hd, img)
 
 	headSprites[right] = loadCustomSprite(55, 96, 25, 8, img)
 	headSprites[left] = loadCustomSprite(55, 114, 25, 8, img)

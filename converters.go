@@ -20,7 +20,7 @@ func OrdinalToPosition(i int) Vec2 {
 	return Vec2{float64(i%TilesPerRow) * TileSize, float64(i/TilesPerRow) * TileSize}
 }
 
-//TileToOrdinal returns ordinal number of a tile with (tx, ty) matrix coordinates
+// TileToOrdinal returns ordinal number of a tile with (tx, ty) matrix coordinates
 func TileToOrdinal(tx, ty int) int {
 	return TilesPerRow*ty + tx
 }
@@ -73,7 +73,7 @@ func RadToDegrees(r float64) int {
 	return int(math.Round(180*(2*math.Pi-r)/math.Pi)) % 360
 }
 
-// carTopLeft returns position of car's top left corner based on sprite
+// CarTopLeft returns position of car's top left corner based on sprite
 func CarTopLeft(c *Car, img *ebiten.Image) Vec2 {
 	width, height := img.Size()
 	return Vec2{c.Position.X - (float64(width) / 2), c.Position.Y - (float64(height) / 2)}

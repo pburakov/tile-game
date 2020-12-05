@@ -12,6 +12,7 @@ type Map struct {
 var world = Map{}
 
 func init() {
+	// TODO: test world, remove tiles and trains below
 	world.setTile(0, 2, rail+hor)
 	world.setTile(1, 2, rail+hor)
 	world.setTile(2, 2, rail+hor)
@@ -78,6 +79,17 @@ func (m *Map) setTile(tx, ty int, b byte) {
 	// Coordinates of top-left corner
 	v := TileToPosition(tx, ty)
 
+	t := &m.tiles[i]
+	t.Sprite = b
+	t.Node = NewPathNode(
+		Vec2{v.X + 8, v.Y + 6}, b != rail+hor && b != rail+ver,
+	)
+
+	connectAdj(tx, ty)
+}
+
+// connectAdj connects node on tile at coordinates tx, ty with path nodes on adjacent tiles if applicable
+func connectAdj(tx, ty int) {
 	// adjacent nodes
 	l, r, u, d :=
 		world.getTile(tx-1, ty),
@@ -85,39 +97,60 @@ func (m *Map) setTile(tx, ty int, b byte) {
 		world.getTile(tx, ty-1),
 		world.getTile(tx, ty+1)
 
-	t := &m.tiles[i]
-	t.Sprite = b
-	t.Node = NewPathNode(
-		Vec2{v.X + 8, v.Y + 6}, b != rail+hor && b != rail+ver,
-	)
-
-	switch b {
+	t := world.getTile(tx, ty)
+	switch t.Sprite {
 	case rail + hor:
-		Connect(l, t, r)
+		if l != nil && (l.Sprite == rail+hor || l.Sprite == rail+dr || l.Sprite == rail+ur) {
+			Connect(l, t)
+		}
+		if r != nil && (r.Sprite == rail+hor || r.Sprite == rail+dl || r.Sprite == rail+ul) {
+			Connect(r, t)
+		}
 	case rail + ver:
-		Connect(u, t, d)
+		if u != nil && (u.Sprite == rail+ver || u.Sprite == rail+dr || u.Sprite == rail+dl) {
+			Connect(u, t)
+		}
+		if d != nil && (d.Sprite == rail+ver || d.Sprite == rail+ur || d.Sprite == rail+ul) {
+			Connect(d, t)
+		}
 	case rail + dl:
-		Connect(l, t, d)
+		if d != nil && (d.Sprite == rail+ver || d.Sprite == rail+ur || d.Sprite == rail+ul) {
+			Connect(d, t)
+		}
+		if l != nil && (l.Sprite == rail+hor || l.Sprite == rail+dr || l.Sprite == rail+ur) {
+			Connect(l, t)
+		}
 	case rail + dr:
-		Connect(r, t, d)
+		if d != nil && (d.Sprite == rail+ver || d.Sprite == rail+ur || d.Sprite == rail+ul) {
+			Connect(d, t)
+		}
+		if r != nil && (r.Sprite == rail+hor || r.Sprite == rail+dl || r.Sprite == rail+ul) {
+			Connect(r, t)
+		}
 	case rail + ul:
-		Connect(l, t, u)
+		if u != nil && (u.Sprite == rail+ver || u.Sprite == rail+dr || u.Sprite == rail+dl) {
+			Connect(u, t)
+		}
+		if l != nil && (l.Sprite == rail+hor || l.Sprite == rail+dr || l.Sprite == rail+ur) {
+			Connect(l, t)
+		}
 	case rail + ur:
-		Connect(r, t, u)
+		if u != nil && (u.Sprite == rail+ver || u.Sprite == rail+dr || u.Sprite == rail+dl) {
+			Connect(u, t)
+		}
+		if r != nil && (r.Sprite == rail+hor || r.Sprite == rail+dl || r.Sprite == rail+ul) {
+			Connect(r, t)
+		}
 	}
 }
 
-// Connect connects nodes on tiles a, n and b assuming n is in the new tile between a and b
-func Connect(a, n, b *Tile) {
-	x := n.Node
-	if a != nil && a.Node != nil {
-		a.Node.Adj[x.Id] = x
-		x.Adj[a.Node.Id] = a.Node
+// Connect connects nodes on tiles a and b
+func Connect(a, b *Tile) {
+	if a == nil || b == nil || a.Node == nil || b.Node == nil {
+		return
 	}
-	if b != nil && b.Node != nil {
-		b.Node.Adj[x.Id] = x
-		x.Adj[b.Node.Id] = b.Node
-	}
+	a.Node.Adj[b.Node.Id] = b.Node
+	b.Node.Adj[a.Node.Id] = a.Node
 }
 
 func (m *Map) getTile(tx, ty int) *Tile {
