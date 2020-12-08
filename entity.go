@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type Heading bool
 
 const (
@@ -26,36 +24,20 @@ type Car struct {
 	Source   *PathNode // Source is the point the car is currently moving from
 }
 
-func (c *Car) DebugInfo() string {
-	return fmt.Sprintf("angle: %d; path: %d -> %d", RadToDegrees(c.Angle), c.Source.Id, c.Target.Id)
-}
-
 type NodeId int
 
 type PathNode struct {
-	Id       NodeId // Node's unique identifier
+	// Id is a PathNode's unique identifier, normally the same as the
+	// ordinal number of a tile it sits on
+	Id       NodeId
 	Position Vec2
-	Adj      map[NodeId]*PathNode // Links to adjacent nodes in any direction
-	IsTurn   bool                 // Denotes whether node is a 90-degree turn in any direction
-}
-
-func NewPathNode(p Vec2, isTurn bool) *PathNode {
-	return &PathNode{
-		Id:       newUid(),
-		Position: p,
-		Adj:      make(map[NodeId]*PathNode),
-		IsTurn:   isTurn,
-	}
+	// Adj contains links to adjacent nodes in any direction
+	Adj map[NodeId]*PathNode
+	// If PathNode is a switch, Selector1 and Selector2 point to currently selected links
+	Selector1, Selector2 NodeId
 }
 
 type Tile struct {
 	Node   *PathNode
 	Sprite byte
-}
-
-var uid NodeId = -1
-
-func newUid() NodeId {
-	uid++
-	return uid
 }

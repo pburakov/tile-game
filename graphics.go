@@ -14,7 +14,7 @@ const (
 	TilesPerRow  = ScreenWidth / TileSize
 )
 
-var DebugColor = color.RGBA{0xff, 0xff, 0x00, 0xff}
+var DebugColor = color.RGBA{R: 0xff, B: 0xff, A: 0xff}
 
 func DrawCursor(sel *Selector, screen *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
@@ -69,7 +69,7 @@ func DrawPaths(m *Map, screen *ebiten.Image) {
 	}
 }
 
-func DrawTrains(trains *[]*Train, screen *ebiten.Image) error {
+func DrawTrains(trains *[]*Train, screen *ebiten.Image, debug bool) error {
 	for _, t := range *trains {
 		for cId, c := range t.Cars {
 			dir := AngleToDirection(c.Angle, t.Heading)
@@ -88,6 +88,14 @@ func DrawTrains(trains *[]*Train, screen *ebiten.Image) error {
 			err := screen.DrawImage(img, op)
 			if err != nil {
 				return err
+			}
+
+			if debug {
+				ebitenutil.DrawLine(
+					screen,
+					c.Position.X, c.Position.Y,
+					c.Target.Position.X, c.Target.Position.Y,
+					DebugColor)
 			}
 		}
 	}

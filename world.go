@@ -1,5 +1,7 @@
 package main
 
+import "math/rand"
+
 const (
 	MapWidth  = 20
 	MapHeight = 15
@@ -60,7 +62,11 @@ func SpawnCar(p Vec2, target *PathNode) *Car {
 		Position: p,
 		Target:   target,
 		// For new cars that start off the screen, the source node is imaginary
-		Source: NewPathNode(p, false),
+		Source: &PathNode{
+			Id:       NodeId(rand.Int()),
+			Position: p,
+			Adj:      make(map[NodeId]*PathNode),
+		},
 	}
 }
 
@@ -81,9 +87,11 @@ func (m *Map) setTile(tx, ty int, b byte) {
 
 	t := &m.tiles[i]
 	t.Sprite = b
-	t.Node = NewPathNode(
-		Vec2{v.X + 8, v.Y + 6}, b != rail+hor && b != rail+ver,
-	)
+	t.Node = &PathNode{
+		Id:       NodeId(i),
+		Position: Vec2{v.X + 8, v.Y + 6},
+		Adj:      make(map[NodeId]*PathNode),
+	}
 
 	connectAdj(tx, ty)
 }

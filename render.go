@@ -4,6 +4,11 @@ import (
 	"github.com/hajimehoshi/ebiten"
 )
 
+const (
+	debugPaths         = false
+	debugPathFollowing = true
+)
+
 func Update(screen *ebiten.Image) error {
 	// Handling changes in user input must go before drawing
 	HandleInput()
@@ -22,7 +27,9 @@ func Update(screen *ebiten.Image) error {
 		return err
 	}
 
-	DrawPaths(&world, screen) // Used for debugging
+	if debugPaths {
+		DrawPaths(&world, screen)
+	}
 
 	// Draw cursor
 	err = DrawCursor(&selector, screen)
@@ -31,7 +38,7 @@ func Update(screen *ebiten.Image) error {
 	}
 
 	// Render moving assets
-	err = DrawTrains(&trains, screen)
+	err = DrawTrains(&trains, screen, debugPathFollowing)
 	if err != nil {
 		return err
 	}

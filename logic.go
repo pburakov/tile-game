@@ -68,9 +68,9 @@ func moveTrain(t *Train) {
 
 // findNextTarget finds the next target node for car to follow
 func findNextTarget(c *Car) *PathNode {
-	// For now, pick the next node that is not the source
-	for k, v := range c.Target.Adj {
-		if k != c.Source.Id {
+	// TODO: Handle switches
+	for _, v := range c.Target.Adj {
+		if v != c.Source {
 			return v
 		}
 	}
