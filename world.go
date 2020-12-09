@@ -39,7 +39,7 @@ func init() {
 
 	trains = []*Train{
 		{
-			Velocity: 1.0,
+			Velocity: 0.25,
 			Cars: []*Car{
 				SpawnCar(Vec2{0, 38}, world.getTile(0, 2).Node),
 				SpawnCar(Vec2{-25, 38}, world.getTile(0, 2).Node),
@@ -47,7 +47,7 @@ func init() {
 			},
 		},
 		{
-			Velocity: 1.0,
+			Velocity: 0.25,
 			Cars: []*Car{
 				SpawnCar(Vec2{104, 240}, world.getTile(6, 14).Node),
 				SpawnCar(Vec2{104, 260}, world.getTile(6, 14).Node),

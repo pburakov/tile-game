@@ -10,5 +10,48 @@ func main() {
 	if err := ebiten.Run(Update, ScreenWidth, ScreenHeight, 2, "Tiles"); err != nil {
 		log.Fatal(err)
 	}
-	Done <- true
+}
+
+const (
+	debugPaths         = false
+	debugPathFollowing = false
+)
+
+func Update(screen *ebiten.Image) error {
+	// Handling changes in user input must go before drawing
+	HandleInput()
+
+	MoveTrains()
+
+	if ebiten.IsDrawingSkipped() {
+		return nil
+	}
+
+	// Draw static world
+	err := DrawBackground(screen)
+	if err != nil {
+		return err
+	}
+	err = DrawTiles(&world, screen)
+	if err != nil {
+		return err
+	}
+
+	if debugPaths {
+		DrawPaths(&world, screen)
+	}
+
+	// Draw cursor
+	err = DrawCursor(&selector, screen)
+	if err != nil {
+		return err
+	}
+
+	// Render moving assets
+	err = DrawTrains(&trains, screen, debugPathFollowing)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
