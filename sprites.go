@@ -16,8 +16,9 @@ const (
 
 	// To construct a tile, combine the starting tile with an offset number
 	// e.g. for crossing: `road + cr` `rail + vl`
-	road = byte(0x00)
-	rail = byte(0x0f)
+	rail = byte(0x00)
+	swch = byte(0x0f)
+	road = byte(0x10)
 
 	// Tile offsets
 	ver = byte(0x01) // Vertical
@@ -72,6 +73,18 @@ func init() {
 	tileSprites[rail+vr] = loadTileSprite(rail+vr, img)
 	tileSprites[rail+hu] = loadTileSprite(rail+hu, img)
 	tileSprites[rail+hd] = loadTileSprite(rail+hd, img)
+
+	tileSprites[swch+ver] = loadTileSprite(swch+ver, img)
+	tileSprites[swch+hor] = loadTileSprite(swch+hor, img)
+	tileSprites[swch+cro] = loadTileSprite(swch+cro, img)
+	tileSprites[swch+dl] = loadTileSprite(swch+dl, img)
+	tileSprites[swch+dr] = loadTileSprite(swch+dr, img)
+	tileSprites[swch+ul] = loadTileSprite(swch+ul, img)
+	tileSprites[swch+ur] = loadTileSprite(swch+ur, img)
+	tileSprites[swch+vl] = loadTileSprite(swch+vl, img)
+	tileSprites[swch+vr] = loadTileSprite(swch+vr, img)
+	tileSprites[swch+hu] = loadTileSprite(swch+hu, img)
+	tileSprites[swch+hd] = loadTileSprite(swch+hd, img)
 
 	tileSprites[road+ver] = loadTileSprite(road+ver, img)
 	tileSprites[road+hor] = loadTileSprite(road+hor, img)

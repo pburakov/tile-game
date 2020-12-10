@@ -34,9 +34,10 @@ type PathNode struct {
 
 type Tile struct {
 	Node *PathNode // Node is a pointer to a PathNode placed on this tile
-	// Sprites contains sprite offsets to render at this tile.
+	// Sprites contains sprite byte offsets to render at this tile.
 	// Tile with a switch will have multiple tracks sprite layers.
-	Sprites []byte
+	Sprites  []byte
+	Selector byte // Selector sprite shows the current direction of a switch
 }
 
 // HasSprite returns true if tile has a given sprite

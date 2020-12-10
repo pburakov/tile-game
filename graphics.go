@@ -48,6 +48,13 @@ func DrawTiles(m *Map, screen *ebiten.Image) error {
 				return err
 			}
 		}
+
+		if len(t.Sprites) > 1 { // Draw selector only for layered switch tiles
+			err := screen.DrawImage(GetTileSprite(t.Selector).(*ebiten.Image), op)
+			if err != nil {
+				return err
+			}
+		}
 	}
 	return nil
 }
