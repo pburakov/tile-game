@@ -22,9 +22,9 @@ var maxRawWheelValue = WheelSelectorRange * float64(len(brushes))
 
 // Selector represents the state of user input
 type Selector struct {
-	CurX, CurY int     // Cursor position
-	RawWheel   float64 // Raw offset from 0 y axis
-	Current    int     // Currently selected index
+	CurX, CurY int     // CurX, CurY are the coordinates of cursor position
+	RawWheel   float64 // RawWheel is a raw offset value from 0 on y-axis
+	Current    int     // Current is a currently selected index
 }
 
 var selector Selector

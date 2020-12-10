@@ -36,11 +36,12 @@ func moveTrain(t *Train) {
 	}
 }
 
-// findNextTarget finds the next target node for car to follow
+// findNextTarget finds the next target node for car to follow. Currently
+// selects the first node that is not the source.
 func findNextTarget(c *Car) *PathNode {
-	// TODO: Handle switches
-	for _, v := range c.Target.Adj {
-		if v != c.Source {
+	u := c.Target
+	for _, v := range []*PathNode{u.AdjL, u.AdjR, u.AdjU, u.AdjD} {
+		if v != nil && v != c.Source {
 			return v
 		}
 	}

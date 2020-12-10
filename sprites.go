@@ -106,6 +106,7 @@ func init() {
 	log.Print("loaded image assets")
 }
 
+// loadImage loads image from file
 func loadImage(path string) (*ebiten.Image, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -123,16 +124,19 @@ func loadImage(path string) (*ebiten.Image, error) {
 	return ebitenImg, nil
 }
 
+// loadCustomSprite loads custom-sized sprite image
 func loadCustomSprite(x, y, width, height int, img *ebiten.Image) image.Image {
 	return img.SubImage(image.Rect(x, y, x+width, y+height))
 }
 
+// loadTileSprite loads a squared tile sprite image
 func loadTileSprite(t byte, img *ebiten.Image) image.Image {
 	width, _ := img.Size()
 	sx, sy := int(t)%(width/TileSize)*TileSize, int(t)/(width/TileSize)*TileSize
 	return img.SubImage(image.Rect(sx, sy, sx+TileSize, sy+TileSize))
 }
 
+// GetTileSprite returns image for a given sprite offset
 func GetTileSprite(t byte) image.Image {
 	sprite, ok := tileSprites[t]
 	if !ok {
@@ -141,6 +145,7 @@ func GetTileSprite(t byte) image.Image {
 	return sprite
 }
 
+// GetHeadSprite returns the sprite for the head of the train
 func GetHeadSprite(direction string) image.Image {
 	sprite, ok := headSprites[direction]
 	if !ok {
@@ -149,6 +154,7 @@ func GetHeadSprite(direction string) image.Image {
 	return sprite
 }
 
+// GetCarSprite returns the sprite for a train's car
 func GetCarSprite(direction string) image.Image {
 	sprite, ok := carSprites[direction]
 	if !ok {

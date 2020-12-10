@@ -1,7 +1,5 @@
 package main
 
-import "math/rand"
-
 const (
 	MapWidth  = 20
 	MapHeight = 15
@@ -62,11 +60,7 @@ func SpawnCar(p Vec2, target *PathNode) *Car {
 		Position: p,
 		Target:   target,
 		// For new cars that start off the screen, the source node is imaginary
-		Source: &PathNode{
-			Id:       NodeId(rand.Int()),
-			Position: p,
-			Adj:      make(map[NodeId]*PathNode),
-		},
+		Source: &PathNode{Position: p},
 	}
 }
 
@@ -77,8 +71,8 @@ func (m *Map) setTile(tx, ty int, b byte) {
 		return
 	}
 	i := TileToOrdinal(tx, ty)
-	// Check if not out of bounds or there is a path already on this tile
-	if i < 0 || i > len(m.tiles)-1 || world.getTile(tx, ty).Sprite != none {
+	// Check if not out of bounds or there is a same path already on this tile
+	if i < 0 || i > len(m.tiles)-1 || world.getTile(tx, ty).HasSprite(b) {
 		return
 	}
 
@@ -86,18 +80,15 @@ func (m *Map) setTile(tx, ty int, b byte) {
 	v := TileToPosition(tx, ty)
 
 	t := &m.tiles[i]
-	t.Sprite = b
-	t.Node = &PathNode{
-		Id:       NodeId(i),
-		Position: Vec2{v.X + 8, v.Y + 6},
-		Adj:      make(map[NodeId]*PathNode),
-	}
+	t.Sprites = append(t.Sprites, b)
+	t.Node = &PathNode{Position: Vec2{v.X + 8, v.Y + 6}}
 
-	connectAdj(tx, ty)
+	connect(tx, ty)
 }
 
-// connectAdj connects node on tile at coordinates tx, ty with path nodes on adjacent tiles if applicable
-func connectAdj(tx, ty int) {
+// connect connects node on tile at coordinates tx, ty with path nodes on
+// adjacent tiles if applicable
+func connect(tx, ty int) {
 	// adjacent nodes
 	l, r, u, d :=
 		world.getTile(tx-1, ty),
@@ -106,59 +97,96 @@ func connectAdj(tx, ty int) {
 		world.getTile(tx, ty+1)
 
 	t := world.getTile(tx, ty)
-	switch t.Sprite {
-	case rail + hor:
-		if l != nil && (l.Sprite == rail+hor || l.Sprite == rail+dr || l.Sprite == rail+ur) {
-			Connect(l, t)
-		}
-		if r != nil && (r.Sprite == rail+hor || r.Sprite == rail+dl || r.Sprite == rail+ul) {
-			Connect(r, t)
-		}
-	case rail + ver:
-		if u != nil && (u.Sprite == rail+ver || u.Sprite == rail+dr || u.Sprite == rail+dl) {
-			Connect(u, t)
-		}
-		if d != nil && (d.Sprite == rail+ver || d.Sprite == rail+ur || d.Sprite == rail+ul) {
-			Connect(d, t)
-		}
-	case rail + dl:
-		if d != nil && (d.Sprite == rail+ver || d.Sprite == rail+ur || d.Sprite == rail+ul) {
-			Connect(d, t)
-		}
-		if l != nil && (l.Sprite == rail+hor || l.Sprite == rail+dr || l.Sprite == rail+ur) {
-			Connect(l, t)
-		}
-	case rail + dr:
-		if d != nil && (d.Sprite == rail+ver || d.Sprite == rail+ur || d.Sprite == rail+ul) {
-			Connect(d, t)
-		}
-		if r != nil && (r.Sprite == rail+hor || r.Sprite == rail+dl || r.Sprite == rail+ul) {
-			Connect(r, t)
-		}
-	case rail + ul:
-		if u != nil && (u.Sprite == rail+ver || u.Sprite == rail+dr || u.Sprite == rail+dl) {
-			Connect(u, t)
-		}
-		if l != nil && (l.Sprite == rail+hor || l.Sprite == rail+dr || l.Sprite == rail+ur) {
-			Connect(l, t)
-		}
-	case rail + ur:
-		if u != nil && (u.Sprite == rail+ver || u.Sprite == rail+dr || u.Sprite == rail+dl) {
-			Connect(u, t)
-		}
-		if r != nil && (r.Sprite == rail+hor || r.Sprite == rail+dl || r.Sprite == rail+ul) {
-			Connect(r, t)
+	for _, s := range t.Sprites {
+		switch s {
+		case rail + hor:
+			if l != nil && l.Node != nil && (l.HasSprite(rail+hor) || l.HasSprite(rail+dr) || l.HasSprite(rail+ur)) {
+				l.Node.AdjR, t.Node.AdjL = t.Node, l.Node
+			}
+			if r != nil && r.Node != nil && (r.HasSprite(rail+hor) || r.HasSprite(rail+dl) || r.HasSprite(rail+ul)) {
+				r.Node.AdjL, t.Node.AdjR = t.Node, r.Node
+			}
+			disconnect(t.Node, t.Node.AdjD)
+			disconnect(t.Node, t.Node.AdjU)
+		case rail + ver:
+			if u != nil && u.Node != nil && (u.HasSprite(rail+ver) || u.HasSprite(rail+dr) || u.HasSprite(rail+dl)) {
+				u.Node.AdjD, t.Node.AdjU = t.Node, u.Node
+			}
+			if d != nil && d.Node != nil && (d.HasSprite(rail+ver) || d.HasSprite(rail+ur) || d.HasSprite(rail+ul)) {
+				d.Node.AdjU, t.Node.AdjD = t.Node, d.Node
+			}
+			disconnect(t.Node, t.Node.AdjL)
+			disconnect(t.Node, t.Node.AdjR)
+		case rail + dl:
+			if d != nil && d.Node != nil && (d.HasSprite(rail+ver) || d.HasSprite(rail+ur) || d.HasSprite(rail+ul)) {
+				d.Node.AdjU, t.Node.AdjD = t.Node, d.Node
+			}
+			if l != nil && l.Node != nil && (l.HasSprite(rail+hor) || l.HasSprite(rail+dr) || l.HasSprite(rail+ur)) {
+				l.Node.AdjR, t.Node.AdjL = t.Node, l.Node
+			}
+			disconnect(t.Node, t.Node.AdjU)
+			disconnect(t.Node, t.Node.AdjR)
+		case rail + dr:
+			if d != nil && d.Node != nil && (d.HasSprite(rail+ver) || d.HasSprite(rail+ur) || d.HasSprite(rail+ul)) {
+				d.Node.AdjU, t.Node.AdjD = t.Node, d.Node
+			}
+			if r != nil && r.Node != nil && (r.HasSprite(rail+hor) || r.HasSprite(rail+dl) || r.HasSprite(rail+ul)) {
+				r.Node.AdjL, t.Node.AdjR = t.Node, r.Node
+			}
+			disconnect(t.Node, t.Node.AdjU)
+			disconnect(t.Node, t.Node.AdjL)
+		case rail + ul:
+			if u != nil && u.Node != nil && (u.HasSprite(rail+ver) || u.HasSprite(rail+dr) || u.HasSprite(rail+dl)) {
+				u.Node.AdjD, t.Node.AdjU = t.Node, u.Node
+			}
+			if l != nil && l.Node != nil && (l.HasSprite(rail+hor) || l.HasSprite(rail+dr) || l.HasSprite(rail+ur)) {
+				l.Node.AdjR, t.Node.AdjL = t.Node, l.Node
+			}
+			disconnect(t.Node, t.Node.AdjD)
+			disconnect(t.Node, t.Node.AdjR)
+		case rail + ur:
+			if u != nil && u.Node != nil && (u.HasSprite(rail+ver) || u.HasSprite(rail+dr) || u.HasSprite(rail+dl)) {
+				u.Node.AdjD, t.Node.AdjU = t.Node, u.Node
+			}
+			if r != nil && r.Node != nil && (r.HasSprite(rail+hor) || r.HasSprite(rail+dl) || r.HasSprite(rail+ul)) {
+				r.Node.AdjL, t.Node.AdjR = t.Node, r.Node
+			}
+			disconnect(t.Node, t.Node.AdjD)
+			disconnect(t.Node, t.Node.AdjL)
 		}
 	}
 }
 
-// Connect connects nodes on tiles a and b
-func Connect(a, b *Tile) {
-	if a == nil || b == nil || a.Node == nil || b.Node == nil {
-		return
+// disconnect removes any connections between the two path nodes
+func disconnect(a, b *PathNode) {
+	if a != nil {
+		if a.AdjL == b {
+			a.AdjL = nil
+		}
+		if a.AdjR == b {
+			a.AdjR = nil
+		}
+		if a.AdjU == b {
+			a.AdjU = nil
+		}
+		if a.AdjD == b {
+			a.AdjD = nil
+		}
 	}
-	a.Node.Adj[b.Node.Id] = b.Node
-	b.Node.Adj[a.Node.Id] = a.Node
+	if b != nil {
+		if b.AdjL == a {
+			b.AdjL = nil
+		}
+		if b.AdjR == a {
+			b.AdjR = nil
+		}
+		if b.AdjU == a {
+			b.AdjU = nil
+		}
+		if b.AdjD == a {
+			b.AdjD = nil
+		}
+	}
 }
 
 func (m *Map) getTile(tx, ty int) *Tile {
@@ -175,15 +203,15 @@ func (m *Map) getTile(tx, ty int) *Tile {
 
 func (m *Map) removeTile(tx, ty int) {
 	i := TileToOrdinal(tx, ty)
-	m.tiles[i].Sprite = 0
+	m.tiles[i].Sprites = []byte{}
 	u := m.tiles[i].Node
 	if u != nil {
-		// Disconnect adjacent connected nodes, if any
-		for _, v := range u.Adj {
-			delete(v.Adj, u.Id)
-		}
-		m.tiles[i].Node = nil
+		disconnect(u, u.AdjL)
+		disconnect(u, u.AdjR)
+		disconnect(u, u.AdjU)
+		disconnect(u, u.AdjD)
 	}
+	m.tiles[i].Node = nil
 }
 
 func (m *Map) getAll() *[MapWidth * MapHeight]Tile {

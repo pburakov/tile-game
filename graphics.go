@@ -42,9 +42,11 @@ func DrawTiles(m *Map, screen *ebiten.Image) error {
 		v := OrdinalToPosition(i)
 		op.GeoM.Translate(v.X, v.Y)
 
-		err := screen.DrawImage(GetTileSprite(t.Sprite).(*ebiten.Image), op)
-		if err != nil {
-			return err
+		for _, s := range t.Sprites {
+			err := screen.DrawImage(GetTileSprite(s).(*ebiten.Image), op)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -58,12 +60,14 @@ func DrawPaths(m *Map, screen *ebiten.Image) {
 				screen,
 				u.Position.X, u.Position.Y, 3, 3,
 				DebugColor)
-			for _, v := range u.Adj {
-				ebitenutil.DrawLine(
-					screen,
-					u.Position.X, u.Position.Y,
-					v.Position.X, v.Position.Y,
-					DebugColor)
+			for _, v := range []*PathNode{u.AdjL, u.AdjR, u.AdjU, u.AdjD} {
+				if v != nil {
+					ebitenutil.DrawLine(
+						screen,
+						u.Position.X, u.Position.Y,
+						v.Position.X, v.Position.Y,
+						DebugColor)
+				}
 			}
 		}
 	}
