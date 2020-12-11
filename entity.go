@@ -1,5 +1,10 @@
 package main
 
+import (
+	"sync/atomic"
+	"time"
+)
+
 type Heading bool
 
 const (
@@ -28,8 +33,26 @@ type PathNode struct {
 	// Id is a PathNode's unique identifier, normally the same as the
 	// ordinal number of a tile it sits on
 	Position Vec2
+	Locks    int32 // Locks counts the number of cars locked on this node
+
 	// AdjL, AdjR, AdjU, AdjD are the links to adjacent nodes in four directions
 	AdjL, AdjR, AdjU, AdjD *PathNode
+}
+
+func (p *PathNode) AddLock() {
+	atomic.AddInt32(&p.Locks, 1)
+}
+
+func (p *PathNode) ReleaseLock() {
+	// TODO: Fix me. Lock is released with a lag to smooth out the gap between cars
+	go func() {
+		time.Sleep(650 * time.Millisecond)
+		atomic.AddInt32(&p.Locks, -1)
+	}()
+}
+
+func (p *PathNode) GetLocks() int32 {
+	return atomic.LoadInt32(&p.Locks)
 }
 
 type Tile struct {

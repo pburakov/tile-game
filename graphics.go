@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"image/color"
@@ -68,6 +69,7 @@ func DrawPaths(m *Map, screen *ebiten.Image) {
 				screen,
 				u.Position.X, u.Position.Y, 3, 3,
 				DebugColor)
+			ebitenutil.DebugPrintAt(screen, fmt.Sprint(u.GetLocks()), int(u.Position.X), int(u.Position.Y))
 			for _, v := range []*PathNode{u.AdjL, u.AdjR, u.AdjU, u.AdjD} {
 				if v != nil {
 					ebitenutil.DrawLine(

@@ -71,18 +71,23 @@ func (m *Map) setTile(tx, ty int, b byte) {
 		return
 	}
 	i := TileToOrdinal(tx, ty)
-	// Check if not out of bounds or there is a same path already on this tile
-	if i < 0 || i > len(m.tiles)-1 || world.getTile(tx, ty).HasSprite(b) {
+	// Check if not out of bounds
+	if i < 0 || i > len(m.tiles)-1 {
 		return
 	}
 
-	// Coordinates of top-left corner
-	v := TileToPosition(tx, ty)
-
 	t := &m.tiles[i]
+	// Check if there is same path already on this tile or it has car locked on it
+	if t.HasSprite(b) || (t.Node != nil && t.Node.GetLocks() > 0) {
+		return
+	}
+
 	t.Sprites = append(t.Sprites, b)
 	// For a tile with switches, the last added sprite will be the primary one
 	t.PSprite = len(t.Sprites) - 1
+
+	// Coordinates of top-left corner
+	v := TileToPosition(tx, ty)
 	t.Node = &PathNode{Position: Vec2{v.X + 8, v.Y + 6}}
 
 	// Adjacent nodes
@@ -215,15 +220,15 @@ func (m *Map) getTile(tx, ty int) *Tile {
 
 func (m *Map) removeTile(tx, ty int) {
 	i := TileToOrdinal(tx, ty)
-	m.tiles[i].Sprites = []byte{}
 	u := m.tiles[i].Node
-	if u != nil {
+	if u != nil && u.GetLocks() == 0 {
 		disconnect(u, u.AdjL)
 		disconnect(u, u.AdjR)
 		disconnect(u, u.AdjU)
 		disconnect(u, u.AdjD)
+		m.tiles[i].Node = nil
+		m.tiles[i].Sprites = []byte{}
 	}
-	m.tiles[i].Node = nil
 }
 
 func (m *Map) getAll() *[MapWidth * MapHeight]Tile {
@@ -232,7 +237,8 @@ func (m *Map) getAll() *[MapWidth * MapHeight]Tile {
 
 func (m *Map) ToggleSwitch(tx, ty int) {
 	t := m.getTile(tx, ty)
-	if t != nil && len(t.Sprites) > 1 { // Is a switch
+	// Check is a switch and doesn't have any car locked on it
+	if t != nil && len(t.Sprites) > 1 && t.Node.GetLocks() == 0 {
 		t.PSprite++
 		if t.PSprite >= len(t.Sprites) {
 			t.PSprite = 0
