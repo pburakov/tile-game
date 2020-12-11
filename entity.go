@@ -34,13 +34,16 @@ type PathNode struct {
 
 type Tile struct {
 	Node *PathNode // Node is a pointer to a PathNode placed on this tile
-	// Sprites contains sprite byte offsets to render at this tile.
-	// Tile with a switch will have multiple tracks sprite layers.
-	Sprites  []byte
-	Selector byte // Selector sprite shows the current direction of a switch
+
+	// Sprites contains sprite byte offsets to render at this tile. Tile with a
+	// switch will have multiple tracks sprite layers.
+	Sprites []byte
+
+	// PSprite is the index of a primary sprite, e.g. used for track switching
+	PSprite int
 }
 
-// HasSprite returns true if tile has a given sprite
+// HasSprite returns true if the tile has a given sprite
 func (t Tile) HasSprite(b byte) bool {
 	for _, s := range t.Sprites {
 		if s == b {
@@ -48,4 +51,11 @@ func (t Tile) HasSprite(b byte) bool {
 		}
 	}
 	return false
+}
+
+// PrimarySprite returns true if the primary sprite of a tile is a given sprite.
+// If tile has a track with a switch on it, primary sprite will match the current
+// switch selector setting.
+func (t Tile) PrimarySprite(b byte) bool {
+	return t.Sprites[t.PSprite] == b
 }

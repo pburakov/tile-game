@@ -8,7 +8,7 @@ import (
 	"github.com/hajimehoshi/ebiten"
 )
 
-// sprite ordinal numbers
+// Sprite ordinal numbers
 const (
 	none   = byte(0x00)
 	grass  = byte(0x19)
@@ -174,4 +174,11 @@ func GetCarSprite(direction string) image.Image {
 		log.Fatalf("error loading car sprite %s", direction)
 	}
 	return sprite
+}
+
+// SwitchOffset does simple sprite offset arithmetic, which allows to switch from one
+// sprite kind to another while maintaining its direction. For example:
+// 	SwitchOffset(ul, rail, road)
+func SwitchOffset(cur, from, to byte) byte {
+	return cur - from + to
 }

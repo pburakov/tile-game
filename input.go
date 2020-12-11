@@ -49,16 +49,18 @@ func HandleInput() {
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		selector.ControlMode = !selector.ControlMode
 	}
-	lftBtn := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
-	rgtBtn := ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight)
 
 	if selector.ControlMode {
 		ebiten.SetCursorVisible(true)
+		lftBtn := inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft)
 		if lftBtn {
-			world.ToggleSwitch(selector.CurX, selector.CurY)
+			tx, ty := PositionToTile(selector.CurX, selector.CurY)
+			world.ToggleSwitch(tx, ty)
 		}
 	} else {
 		ebiten.SetCursorVisible(false)
+		lftBtn := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
+		rgtBtn := ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight)
 		if lftBtn {
 			tx, ty := PositionToTile(selector.CurX, selector.CurY)
 			world.setTile(tx, ty, selector.GetCurrentSelection())

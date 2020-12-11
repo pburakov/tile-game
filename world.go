@@ -81,6 +81,8 @@ func (m *Map) setTile(tx, ty int, b byte) {
 
 	t := &m.tiles[i]
 	t.Sprites = append(t.Sprites, b)
+	// For a tile with switches, the last added sprite will be the primary one
+	t.PSprite = len(t.Sprites) - 1
 	t.Node = &PathNode{Position: Vec2{v.X + 8, v.Y + 6}}
 
 	// Adjacent nodes
@@ -103,62 +105,67 @@ func connect(l, r, u, d, t *Tile, s byte) {
 		return
 	}
 
-	// Remove all current adjacent connections
+	// First remove any current adjacent connections
 	disconnect(t.Node, t.Node.AdjL)
 	disconnect(t.Node, t.Node.AdjR)
 	disconnect(t.Node, t.Node.AdjU)
 	disconnect(t.Node, t.Node.AdjD)
 
-	// Set up new connections and set selector
 	switch s {
 	case rail + hor:
-		if l != nil && l.Node != nil && (l.HasSprite(rail+hor) || l.HasSprite(rail+dr) || l.HasSprite(rail+ur)) {
+		if l != nil && l.Node != nil &&
+			(l.PrimarySprite(rail+hor) || l.PrimarySprite(rail+dr) || l.PrimarySprite(rail+ur)) {
 			l.Node.AdjR, t.Node.AdjL = t.Node, l.Node
 		}
-		if r != nil && r.Node != nil && (r.HasSprite(rail+hor) || r.HasSprite(rail+dl) || r.HasSprite(rail+ul)) {
+		if r != nil && r.Node != nil &&
+			(r.PrimarySprite(rail+hor) || r.PrimarySprite(rail+dl) || r.PrimarySprite(rail+ul)) {
 			r.Node.AdjL, t.Node.AdjR = t.Node, r.Node
 		}
-		t.Selector = swch + hor
 	case rail + ver:
-		if u != nil && u.Node != nil && (u.HasSprite(rail+ver) || u.HasSprite(rail+dr) || u.HasSprite(rail+dl)) {
+		if u != nil && u.Node != nil &&
+			(u.PrimarySprite(rail+ver) || u.PrimarySprite(rail+dr) || u.PrimarySprite(rail+dl)) {
 			u.Node.AdjD, t.Node.AdjU = t.Node, u.Node
 		}
-		if d != nil && d.Node != nil && (d.HasSprite(rail+ver) || d.HasSprite(rail+ur) || d.HasSprite(rail+ul)) {
+		if d != nil && d.Node != nil &&
+			(d.PrimarySprite(rail+ver) || d.PrimarySprite(rail+ur) || d.PrimarySprite(rail+ul)) {
 			d.Node.AdjU, t.Node.AdjD = t.Node, d.Node
 		}
-		t.Selector = swch + ver
 	case rail + dl:
-		if d != nil && d.Node != nil && (d.HasSprite(rail+ver) || d.HasSprite(rail+ur) || d.HasSprite(rail+ul)) {
+		if d != nil && d.Node != nil &&
+			(d.PrimarySprite(rail+ver) || d.PrimarySprite(rail+ur) || d.PrimarySprite(rail+ul)) {
 			d.Node.AdjU, t.Node.AdjD = t.Node, d.Node
 		}
-		if l != nil && l.Node != nil && (l.HasSprite(rail+hor) || l.HasSprite(rail+dr) || l.HasSprite(rail+ur)) {
+		if l != nil && l.Node != nil &&
+			(l.PrimarySprite(rail+hor) || l.PrimarySprite(rail+dr) || l.PrimarySprite(rail+ur)) {
 			l.Node.AdjR, t.Node.AdjL = t.Node, l.Node
 		}
-		t.Selector = swch + dl
 	case rail + dr:
-		if d != nil && d.Node != nil && (d.HasSprite(rail+ver) || d.HasSprite(rail+ur) || d.HasSprite(rail+ul)) {
+		if d != nil && d.Node != nil &&
+			(d.PrimarySprite(rail+ver) || d.PrimarySprite(rail+ur) || d.PrimarySprite(rail+ul)) {
 			d.Node.AdjU, t.Node.AdjD = t.Node, d.Node
 		}
-		if r != nil && r.Node != nil && (r.HasSprite(rail+hor) || r.HasSprite(rail+dl) || r.HasSprite(rail+ul)) {
+		if r != nil && r.Node != nil &&
+			(r.PrimarySprite(rail+hor) || r.PrimarySprite(rail+dl) || r.PrimarySprite(rail+ul)) {
 			r.Node.AdjL, t.Node.AdjR = t.Node, r.Node
 		}
-		t.Selector = swch + dr
 	case rail + ul:
-		if u != nil && u.Node != nil && (u.HasSprite(rail+ver) || u.HasSprite(rail+dr) || u.HasSprite(rail+dl)) {
+		if u != nil && u.Node != nil &&
+			(u.PrimarySprite(rail+ver) || u.PrimarySprite(rail+dr) || u.PrimarySprite(rail+dl)) {
 			u.Node.AdjD, t.Node.AdjU = t.Node, u.Node
 		}
-		if l != nil && l.Node != nil && (l.HasSprite(rail+hor) || l.HasSprite(rail+dr) || l.HasSprite(rail+ur)) {
+		if l != nil && l.Node != nil &&
+			(l.PrimarySprite(rail+hor) || l.PrimarySprite(rail+dr) || l.PrimarySprite(rail+ur)) {
 			l.Node.AdjR, t.Node.AdjL = t.Node, l.Node
 		}
-		t.Selector = swch + ul
 	case rail + ur:
-		if u != nil && u.Node != nil && (u.HasSprite(rail+ver) || u.HasSprite(rail+dr) || u.HasSprite(rail+dl)) {
+		if u != nil && u.Node != nil &&
+			(u.PrimarySprite(rail+ver) || u.PrimarySprite(rail+dr) || u.PrimarySprite(rail+dl)) {
 			u.Node.AdjD, t.Node.AdjU = t.Node, u.Node
 		}
-		if r != nil && r.Node != nil && (r.HasSprite(rail+hor) || r.HasSprite(rail+dl) || r.HasSprite(rail+ul)) {
+		if r != nil && r.Node != nil &&
+			(r.PrimarySprite(rail+hor) || r.PrimarySprite(rail+dl) || r.PrimarySprite(rail+ul)) {
 			r.Node.AdjL, t.Node.AdjR = t.Node, r.Node
 		}
-		t.Selector = swch + ur
 	}
 }
 
@@ -223,9 +230,23 @@ func (m *Map) getAll() *[MapWidth * MapHeight]Tile {
 	return &m.tiles
 }
 
-func (m *Map) ToggleSwitch(x, y int) {
-	t := m.getTile(x, y)
+func (m *Map) ToggleSwitch(tx, ty int) {
+	t := m.getTile(tx, ty)
 	if t != nil && len(t.Sprites) > 1 { // Is a switch
-		// TODO: implement switching
+		t.PSprite++
+		if t.PSprite >= len(t.Sprites) {
+			t.PSprite = 0
+		} else if t.PSprite < 0 {
+			t.PSprite = len(t.Sprites) - 1
+		}
+
+		// Adjacent nodes
+		l, r, u, d :=
+			world.getTile(tx-1, ty),
+			world.getTile(tx+1, ty),
+			world.getTile(tx, ty-1),
+			world.getTile(tx, ty+1)
+
+		connect(l, r, u, d, t, t.Sprites[t.PSprite])
 	}
 }
