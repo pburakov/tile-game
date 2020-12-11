@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-	ebiten.SetCursorVisible(false)
 	if err := ebiten.Run(Update, ScreenWidth, ScreenHeight, 2, "Tiles"); err != nil {
 		log.Fatal(err)
 	}
@@ -42,9 +41,11 @@ func Update(screen *ebiten.Image) error {
 	}
 
 	// Draw cursor
-	err = DrawCursor(&selector, screen)
-	if err != nil {
-		return err
+	if !selector.ControlMode {
+		err = DrawCursor(&selector, screen)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Render moving assets

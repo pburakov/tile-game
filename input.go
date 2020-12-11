@@ -22,9 +22,10 @@ var maxRawWheelValue = WheelSelectorRange * float64(len(brushes))
 
 // Selector represents the state of user input
 type Selector struct {
-	CurX, CurY int     // CurX, CurY are the coordinates of cursor position
-	RawWheel   float64 // RawWheel is a raw offset value from 0 on y-axis
-	Current    int     // Current is a currently selected index
+	CurX, CurY  int     // CurX, CurY are the coordinates of cursor position
+	RawWheel    float64 // RawWheel is a raw offset value from 0 on y-axis
+	Current     int     // Current is a currently selected index
+	ControlMode bool    // ControlMode is true when not in construction mode
 }
 
 var selector Selector
@@ -45,14 +46,25 @@ func HandleInput() {
 	selPrv := inpututil.IsKeyJustPressed(ebiten.KeyE)
 	selector.ApplyKeyDelta(selNxt, selPrv)
 
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		selector.ControlMode = !selector.ControlMode
+	}
 	lftBtn := ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)
 	rgtBtn := ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight)
 
-	if lftBtn {
-		tx, ty := PositionToTile(selector.CurX, selector.CurY)
-		world.setTile(tx, ty, selector.GetCurrentSelection())
-	} else if rgtBtn {
-		world.removeTile(PositionToTile(selector.CurX, selector.CurY))
+	if selector.ControlMode {
+		ebiten.SetCursorVisible(true)
+		if lftBtn {
+			world.ToggleSwitch(selector.CurX, selector.CurY)
+		}
+	} else {
+		ebiten.SetCursorVisible(false)
+		if lftBtn {
+			tx, ty := PositionToTile(selector.CurX, selector.CurY)
+			world.setTile(tx, ty, selector.GetCurrentSelection())
+		} else if rgtBtn {
+			world.removeTile(PositionToTile(selector.CurX, selector.CurY))
+		}
 	}
 }
 
