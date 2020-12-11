@@ -21,8 +21,20 @@ func moveTrain(t *Train) {
 		}
 	}
 
-	// Calculate route for each car, including head
-	for _, c := range t.Cars {
+	// Calculate angle and velocity for each car, including head. All cars
+	// except the head will adjust own velocity to chase the previous car in
+	// order stay as close to each other as possible. This loop goes in both
+	// directions. The order in which cars are arranged depends on the train's
+	// heading.
+	var prev *Car
+	for i, k := 0, len(t.Cars)-1; i < len(t.Cars) && k >= 0; i, k = i+1, k-1 {
+		var c *Car
+		if t.Heading == pull {
+			c = t.Cars[i]
+		} else {
+			c = t.Cars[k]
+		}
+
 		if atTarget(c, t.Velocity) {
 			newTarget := findNextTarget(c)
 			if newTarget != nil {
@@ -30,9 +42,25 @@ func moveTrain(t *Train) {
 			} // TODO: else a car probably derailed
 		}
 
+		velocity := t.Velocity
+		if prev != nil {
+			dir := AngleToDirection(c.Angle, t.Heading)
+			expectedDist := 1 + math.Max(
+				float64(GetCarSprite(dir).Bounds().Dx()),
+				float64(GetCarSprite(dir).Bounds().Dy()),
+			)
+			if c.Position.DistanceTo(prev.Position) > expectedDist {
+				velocity = velocity * 2
+			} else if c.Position.DistanceTo(prev.Position) < expectedDist {
+				velocity = velocity * 0.5
+			}
+		}
+
 		c.Angle = c.Position.Angle(c.Target.Position)
-		u := UnitDistance(c.Angle, t.Velocity)
+		u := UnitDistance(c.Angle, velocity)
 		c.Position.Add(u)
+
+		prev = c
 	}
 }
 

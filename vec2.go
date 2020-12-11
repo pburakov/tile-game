@@ -22,3 +22,8 @@ func (v *Vec2) Angle(u Vec2) float64 {
 	dy := u.Y - v.Y
 	return math.Atan2(dy, dx)
 }
+
+// DistanceTo returns distance between vectors u and v
+func (v *Vec2) DistanceTo(u Vec2) float64 {
+	return math.Sqrt(math.Pow(u.X-v.X, 2) + math.Pow(u.Y-v.Y, 2))
+}
