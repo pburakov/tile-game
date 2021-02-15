@@ -6,14 +6,14 @@ type Vec2 struct {
 	X, Y float64
 }
 
-func (v *Vec2) Add(u Vec2) {
+func (v *Vec2) Add(u *Vec2) {
 	v.X += u.X
 	v.Y += u.Y
 }
 
-// UnitDistance returns a unit-speed vector with a given angle and velocity
-func UnitDistance(angle float64, v float64) Vec2 {
-	return Vec2{v * math.Cos(angle), v * math.Sin(angle)}
+// NewVec2 returns a new vector with a given magnitude and direction angle
+func NewVec2(mag, dir float64) Vec2 {
+	return Vec2{mag * math.Cos(dir), mag * math.Sin(dir)}
 }
 
 // Angle returns angle between vectors u and v

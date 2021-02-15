@@ -4,6 +4,10 @@ import (
 	"math"
 )
 
+// chaseMultiplier is the velocity multiplier coefficient with which a car
+// temporarily speeds up or slows down to chase a previous car.
+const chaseMultiplier = 2.50
+
 // MoveTrains updates trains state
 func MoveTrains() {
 	for _, t := range trains {
@@ -42,8 +46,8 @@ func moveTrain(t *Train) {
 		}
 
 		c.Angle = c.Position.Angle(c.Target.Position)
-		u := UnitDistance(c.Angle, Velocity(c, prev, t))
-		c.Position.Add(u)
+		u := NewVec2(Velocity(c, prev, t), c.Angle)
+		c.Position.Add(&u)
 
 		prev = c
 	}
@@ -61,9 +65,9 @@ func Velocity(c, prev *Car, t *Train) float64 {
 			float64(GetCarSprite(dir).Bounds().Dy()),
 		)
 		if c.Position.DistanceTo(prev.Position) > expectedDist {
-			velocity = velocity * 2
+			velocity = velocity * chaseMultiplier
 		} else if c.Position.DistanceTo(prev.Position) < expectedDist {
-			velocity = velocity * 0.5
+			velocity = velocity / chaseMultiplier
 		}
 	}
 	return velocity
@@ -95,6 +99,9 @@ func reverseTrain(t *Train) {
 }
 
 func atTarget(c *Car, threshold float64) bool {
+	if c.Target.IsTurn() {
+		return true
+	}
 	return math.Abs(c.Position.X-c.Target.Position.X) <= threshold &&
 		math.Abs(c.Position.Y-c.Target.Position.Y) <= threshold
 }

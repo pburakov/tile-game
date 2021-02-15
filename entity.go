@@ -55,6 +55,13 @@ func (p *PathNode) GetLocks() int32 {
 	return atomic.LoadInt32(&p.Locks)
 }
 
+func (p PathNode) IsTurn() bool {
+	return (p.AdjR != nil && p.AdjD != nil) ||
+		(p.AdjL != nil && p.AdjD != nil) ||
+		(p.AdjR != nil && p.AdjU != nil) ||
+		(p.AdjL != nil && p.AdjU != nil)
+}
+
 type Tile struct {
 	Node *PathNode // Node is a pointer to a PathNode placed on this tile
 
