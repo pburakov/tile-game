@@ -85,8 +85,21 @@ func DrawPaths(m *Map, screen *ebiten.Image) {
 
 func DrawTrains(trains *[]*Train, screen *ebiten.Image, debug bool) error {
 	for _, t := range *trains {
+		if debug {
+			pts, _ := buildCurve(t.route)
+			for i := 0; i < len(pts)-1; i++ {
+				ebitenutil.DrawLine(
+					screen,
+					pts[i].X, pts[i].Y,
+					pts[i+1].X, pts[i+1].Y,
+					DebugColor)
+			}
+		}
+
 		for cId, c := range t.Cars {
-			dir := AngleToDirection(c.Angle, t.Heading)
+			// Cars[0] is the leading car, so it gets the locomotive sprite. The
+			// sprite direction comes straight from the car's travel angle.
+			dir := AngleToDirection(c.Angle, pull)
 
 			var img *ebiten.Image
 			if cId == 0 {
@@ -102,14 +115,6 @@ func DrawTrains(trains *[]*Train, screen *ebiten.Image, debug bool) error {
 			err := screen.DrawImage(img, op)
 			if err != nil {
 				return err
-			}
-
-			if debug {
-				ebitenutil.DrawLine(
-					screen,
-					c.Position.X, c.Position.Y,
-					c.Target.Position.X, c.Target.Position.Y,
-					DebugColor)
 			}
 		}
 	}

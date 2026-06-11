@@ -36,31 +36,8 @@ func init() {
 	world.setTile(10, 9, rail+hor)
 
 	trains = []*Train{
-		{
-			Velocity: 0.25,
-			Cars: []*Car{
-				SpawnCar(Vec2{0, 38}, world.getTile(0, 2).Node),
-				SpawnCar(Vec2{-25, 38}, world.getTile(0, 2).Node),
-				SpawnCar(Vec2{-50, 38}, world.getTile(0, 2).Node),
-			},
-		},
-		{
-			Velocity: 0.25,
-			Cars: []*Car{
-				SpawnCar(Vec2{104, 240}, world.getTile(6, 14).Node),
-				SpawnCar(Vec2{104, 260}, world.getTile(6, 14).Node),
-				SpawnCar(Vec2{104, 280}, world.getTile(6, 14).Node),
-			},
-		},
-	}
-}
-
-func SpawnCar(p Vec2, target *PathNode) *Car {
-	return &Car{
-		Position: p,
-		Target:   target,
-		// For new cars that start off the screen, the source node is imaginary
-		Source: &PathNode{Position: p},
+		SpawnTrain(0.25, world.getTile(0, 2).Node, 3),
+		SpawnTrain(0.25, world.getTile(6, 14).Node, 3),
 	}
 }
 

@@ -1,10 +1,8 @@
 package main
 
-import (
-	"sync/atomic"
-	"time"
-)
-
+// Heading selects how an angle maps to a sprite. It is kept around because
+// AngleToDirection takes it; movement no longer depends on it since each car's
+// sprite is chosen straight from its travel direction.
 type Heading bool
 
 const (
@@ -13,53 +11,39 @@ const (
 )
 
 type Train struct {
-	Velocity float64 // Velocity is train's base velocity
-	Cars     []*Car
+	Velocity float64 // Velocity is the head's speed in pixels per frame
 
-	// Heading denotes whether head car is pushing or pulling. Although a train
-	// can have two locomotives the head is always relative to its starting
-	// direction
-	Heading Heading
+	Cars []*Car // Cars[0] is always the leading car (gets the locomotive sprite)
+
+	// route is the sequence of path nodes the train currently rides on, ordered
+	// from the rear-most node (route[0]) to the frontier node ahead of the head
+	// (route[len-1]). The smooth curve the cars follow is built from it.
+	route []*PathNode
+
+	// s is the arc length of the head measured from the start of the curve built
+	// from route. Following cars sit at s - i*carSpacing behind it.
+	s float64
 }
 
 type Car struct {
-	Position Vec2      // Position of car's geometric center
-	Angle    float64   // Angle is the last known angle the car is traveling at
-	Target   *PathNode // Target is the point the car is currently moving towards
-	Source   *PathNode // Source is the point the car is currently moving from
+	Position Vec2    // Position of car's geometric center
+	Angle    float64 // Angle is the direction the car is travelling at
 }
 
 type PathNode struct {
-	// Id is a PathNode's unique identifier, normally the same as the
-	// ordinal number of a tile it sits on
+	// Position is the on-screen position of the node, normally a tile center
 	Position Vec2
-	Locks    int32 // Locks counts the number of cars locked on this node
+
+	// Locks counts how many trains currently occupy (or reserve) this node.
+	// Single-goroutine state, no synchronization needed.
+	Locks int
 
 	// AdjL, AdjR, AdjU, AdjD are the links to adjacent nodes in four directions
 	AdjL, AdjR, AdjU, AdjD *PathNode
 }
 
-func (p *PathNode) AddLock() {
-	atomic.AddInt32(&p.Locks, 1)
-}
-
-func (p *PathNode) ReleaseLock() {
-	// TODO: Fix me. Lock is released with a lag to smooth out the gap between cars
-	go func() {
-		time.Sleep(650 * time.Millisecond)
-		atomic.AddInt32(&p.Locks, -1)
-	}()
-}
-
-func (p *PathNode) GetLocks() int32 {
-	return atomic.LoadInt32(&p.Locks)
-}
-
-func (p PathNode) IsTurn() bool {
-	return (p.AdjR != nil && p.AdjD != nil) ||
-		(p.AdjL != nil && p.AdjD != nil) ||
-		(p.AdjR != nil && p.AdjU != nil) ||
-		(p.AdjL != nil && p.AdjU != nil)
+func (p *PathNode) GetLocks() int {
+	return p.Locks
 }
 
 type Tile struct {
